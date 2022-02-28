@@ -44,7 +44,7 @@ const HeaderMUI = () => {
             component="div"
             sx={{ ml: 36, mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-            LOGO
+            SUREcrm
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
