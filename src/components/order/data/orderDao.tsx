@@ -1,5 +1,4 @@
-const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwicm9sZSI6ImNybV91c2VyIn0.Gbw2YATAjD8E8hXxaT3sLbo2IgPibpNbVUg1sX0imvc';
-const DOMAIN = 'http://95.165.6.202:3000';
+import { DOMAIN, TOKEN } from "../../../shared/appConsts";
 
 export async function postNewOrder(newOrder: OrderType) {
     let { id, date, ...order } = newOrder; // look at https://stackoverflow.com/questions/34698905/how-can-i-clone-a-javascript-object-except-for-one-key
