@@ -4,7 +4,7 @@ This is (today is 2022.03.01) only 0.01 first version, feel free to use it for a
 Contributions are welcome!
 
 The goal of this project is to create a rich template for business and to lonch it as SaaS. 
-Our solution consumes a restful API with token support powered by PostgREST. You can easily clone it - see API Swagger Docs at our test setver https://192.168.1.78/ or according to api calls (see <componentName>Dao.tsx files at component subfolders ../data) 
+Our solution consumes a restful API with token support powered by PostgREST. You can easily clone it - see API Swagger Docs at our test setver https://surecrm.org/ or according to api calls (see <componentName>Dao.tsx files at component subfolders ../data) 
 
 Live Demo: visit https://surecrm.vercel.app/
 The demo is just a proof of concept. Please play free, but do not delete all data ))
