@@ -5,7 +5,7 @@ import { currentCustomerIdState, newCustomerState } from './data/customerState';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { openEditModalState, showYesCancelDialogState } from '../../state/state';
-import { currentCustomerCategIdState } from '../customerCategory/customerCategoriesState';
+import { currentCustomerCategIdState } from '../customerCateg/data/customerCategState';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 interface Props {
@@ -61,31 +61,7 @@ export const Customer: React.FC<Props> = ({ customer }) => {
                             </IconButton>
                         </ButtonGroup>
                     </Container>
-                </Grid>                {/* <Grid item xs={1} >
-                    <Container >
-                        <IconButton size="medium" onClick={() => {
-                            setShowYesCancelDialog(true);
-                            setCurrentCustomerId(customer.id);
-                        }}>
-                            <DeleteIcon />
-                        </IconButton>
-                    </Container>
-                </Grid> */}
-                {/* <Grid item xs={1} >
-                    <Container >
-                        <IconButton size="medium" onClick={() => {
-                            setCurrentCustomerId(customer.id);
-                            setCurrentCustomerCategId(customer.category_id);
-                            setNewCustomer(customer);
-                            setOpenEditModal(true);
-                        }}>
-                            <EditIcon />
-                        </IconButton>
-                    </Container>
-                </Grid> */}
-                {/* <Grid item xs={0}>
-                    <Container>{''}</Container>
-                </Grid> */}
+                </Grid>
             </Grid>
             <Divider />
         </>

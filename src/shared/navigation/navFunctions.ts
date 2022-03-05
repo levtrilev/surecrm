@@ -7,13 +7,15 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import DescriptionIcon from "@mui/icons-material/Description";
 import DraftsIcon from "@mui/icons-material/Drafts";
 
-export const settings_bak = ['Profile', 'Account', 'Dashboard', 'Logout', ];
-export const settings = ['Users', 'Tenants', 'Sections', 'Roles', ];
+export const settings_bak = ["Profile", "Account", "Dashboard", "Logout"];
+export const settings = ["Users", "Tenants", "Sections", "Roles"];
 export const pages = [
   "Products",
   "Customers",
   "Orders",
   "Posts",
+  "Customer categ",
+  "Product categ",
   "Products_",
   "Customers_",
   "Orders_",
@@ -27,6 +29,7 @@ export const navSvgIcons = [
   InboxIcon,
   InboxIcon,
   MailIcon,
+  AccountCircleIcon,
 ];
 
 export const handleMenuItemClick = (
@@ -48,12 +51,18 @@ export const handleMenuItemClick = (
       navigate("/posts", { replace: true });
       break;
     case 4:
-      navigate("/_products", { replace: true });
+      navigate("/customer_categs", { replace: true });
       break;
     case 5:
-      navigate("/_customers", { replace: true });
+      navigate("/prod_categs", { replace: true });
       break;
     case 6:
+      navigate("/_products", { replace: true });
+      break;
+    case 7:
+      navigate("/_customers", { replace: true });
+      break;
+    case 8:
       navigate("/_orders", { replace: true });
       break;
     default:

@@ -3,12 +3,9 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Grid, TextField, Typography } from '@mui/material';
 import { Item } from '../../shared/elements';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { newProductState } from './data/productState';
-import { prodCategQuery } from '../productCategory/data/prodCategState';
+import { useRecoilState } from 'recoil';
+import { newCustomerCategState } from './data/customerCategState';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -25,33 +22,24 @@ const style = {
 };
 
 interface Props {
-    product: ProductType;
-    setOpenProdCategSelector: (selectorState: boolean) => void;
-    updateProduct: (product: ProductType) => void;
+    customerCateg: CustomerCategoryType;
+    updateCustomerCateg: (customerCateg: CustomerCategoryType) => void;
     editmodeText: string;
     handleClose: () => void;
-    ProdCategSelector: React.FC;
     modalState: boolean;
 }
 
-export const ProductEditForm: React.FC<Props> = ({ product, updateProduct, editmodeText,
-    setOpenProdCategSelector, ProdCategSelector, handleClose, modalState }) => {
-    const currentProdCateg = useRecoilValue(prodCategQuery);
+export const CustomerCategEditForm: React.FC<Props> = ({ customerCateg, updateCustomerCateg, editmodeText,
+    handleClose, modalState }) => {
+    const [newCustomerCateg, setNewCustomerCateg] = useRecoilState(newCustomerCategState);
 
-    const [newProduct, setNewProduct] = useRecoilState(newProductState);
+    const onCustomerCategNameChange = (event: any) => {
+        setNewCustomerCateg({ ...newCustomerCateg, 'name': event.target.value });
+    };
+    // const onCustomerCategBlockedToggle = (event: any) => {
+    //     setNewCustomerCateg({ ...newCustomerCateg, 'blocked': event.target.checked });
+    // };
 
-    const onProductVatChange = (event: any) => {
-        setNewProduct({ ...newProduct, 'vat': event.target.value });
-    };
-    const onProductNameChange = (event: any) => {
-        setNewProduct({ ...newProduct, 'name': event.target.value });
-    };
-    const onProductBlockedToggle = (event: any) => {
-        setNewProduct({ ...newProduct, 'blocked': event.target.checked });
-    };
-    const onProductBasePriceChange = (event: any) => {
-        setNewProduct({ ...newProduct, 'base_price': event.target.value });
-    };
     return (
         <React.Fragment>
             <Modal
@@ -66,12 +54,12 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct, editm
                             <Grid item xs={8}>
                                 <Item>
                                     <Typography variant="h6" gutterBottom component="div">
-                                        {`Product id: ${product.id} (${editmodeText})`}
+                                        {`Categoty id: ${customerCateg.id} (${editmodeText})`}
                                     </Typography>
                                 </Item>
                             </Grid>
                             <Grid item xs={4}>
-                                <FormControlLabel control={<Checkbox checked={newProduct.blocked} onChange={onProductBlockedToggle} />} label="product-blocked" />
+                                {/* <FormControlLabel control={<Checkbox checked={newCustomerCateg.blocked} onChange={onCustomerCategBlockedToggle} />} label="product-blocked" /> */}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -79,27 +67,27 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct, editm
                     <Grid container spacing={1}>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <TextField id="product-name" label="Product name" onChange={onProductNameChange} value={newProduct.name} />
+                                <TextField id="categoty-name" label="Categoty name" onChange={onCustomerCategNameChange} value={newCustomerCateg.name} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-category-id" label="Category ID (select)" onClick={() => setOpenProdCategSelector(true)} value={newProduct.category_id} />
+                                {/* <TextField id="product-category-id" label="Category ID (select)" onClick={() => setOpenProdCategSelector(true)} value={newProduct.category_id} /> */}
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-category" label="Category" onClick={() => setOpenProdCategSelector(true)} value={currentProdCateg.name} />
+                                {/* <TextField id="product-category" label="Category" onClick={() => setOpenProdCategSelector(true)} value={currentProdCateg.name} /> */}
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <TextField id="product-base-price" label="Base price" onChange={onProductBasePriceChange} value={newProduct.base_price} />
+                                {/* <TextField id="product-base-price" label="Base price" onChange={onProductBasePriceChange} value={newProduct.base_price} /> */}
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-vat" label="VAT,%" onChange={onProductVatChange} value={newProduct.vat} />
+                                {/* <TextField id="product-vat" label="VAT,%" onChange={onProductVatChange} value={newProduct.vat} /> */}
                             </Grid>
                         </Grid>
 
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <Button onClick={() => updateProduct(newProduct)}>
+                                <Button onClick={() => updateCustomerCateg(newCustomerCateg)}>
                                     save
                                 </Button>
                             </Grid>
@@ -115,7 +103,6 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct, editm
                             </Grid>
                         </Grid>
                     </Grid>
-                    <ProdCategSelector />
                 </Box>
             </Modal>
         </React.Fragment>

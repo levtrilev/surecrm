@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { postNewCustomer, putUpdatedCustomer } from './data/customerDao';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { newCustomerState, customersFullQuery } from './data/customerState'
-import { currentCustomerCategIdState, openCustomerCategSelectorState } from '../customerCategory/customerCategoriesState';
+import { newCustomerState, customersFullQuery, customerQuery } from './data/customerState'
+import { currentCustomerCategIdState, openCustomerCategSelectorState } from '../customerCateg/data/customerCategState';
 import { useEffect } from 'react';
-import { CustomerCategSelector } from '../customerCategory/CustomerCategSelector';
+import { CustomerCategSelector } from '../customerCateg/CustomerCategSelector';
 import { CustomerEditForm } from './CustomerEditForm';
 
 interface Props {
@@ -19,6 +19,7 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState, setFromPar
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
     const setOpenCustomerCategSelector = useSetRecoilState(openCustomerCategSelectorState);
     const currentCustomerCategId = useRecoilValue(currentCustomerCategIdState);
+    const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery);
 
     const handleClose = () => {
         setFromParrent(false);
@@ -31,10 +32,12 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState, setFromPar
             putUpdatedCustomer(customer);
         }
         setTimeout(refreshCustomers, 300);
+        setTimeout(refreshCustomer, 300);
     };
     useEffect(() => {
         setNewCustomer({ ...newCustomer, 'category_id': currentCustomerCategId });
         // console.log('useEffect fired!');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerCategId]);
     return (
         <div>

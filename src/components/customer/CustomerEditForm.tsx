@@ -7,8 +7,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import { newCustomerState } from './data/customerState';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { customerCategQuery } from '../customerCategory/customerCategoriesState';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
+import { customerCategQuery } from '../customerCateg/data/customerCategState';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -39,6 +39,8 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
     modalState, editmodeText }) => {
 
     const currentCustomerCateg = useRecoilValue(customerCategQuery);
+    const refreshCustomerCateg = useRecoilRefresher_UNSTABLE(customerCategQuery);
+
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
     const onCustomerNameChange = (event: any) => {
         setNewCustomer({ ...newCustomer, 'name': event.target.value });
@@ -76,15 +78,19 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
                                 <TextField id="customer-name" label="Customer name" onChange={onCustomerNameChange} value={newCustomer.name} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="customer-category-id" label="Category ID (select)" onClick={() => setOpenCustomerCategSelector(true)} value={newCustomer.category_id} />
+                                <TextField id="customer-category-id" label="Category ID (select)" 
+                                onClick={() => {setOpenCustomerCategSelector(true); refreshCustomerCateg();}}
+                                value={newCustomer.category_id} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="customer-category" label="Category" onClick={() => setOpenCustomerCategSelector(true)} value={currentCustomerCateg.name} />
+                                <TextField id="customer-category" label="Category" 
+                                onClick={() => {setOpenCustomerCategSelector(true); refreshCustomerCateg();}} 
+                                value={currentCustomerCateg.name} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <Button onClick={() => updateCustomer(newCustomer)}>
+                                <Button onClick={() => {updateCustomer(newCustomer)}}>
                                     save
                                 </Button>
                             </Grid>

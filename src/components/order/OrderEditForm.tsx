@@ -3,11 +3,9 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Grid, TextField, Typography } from '@mui/material';
 import { Item } from '../../shared/elements';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import { newOrderState } from './data/orderState';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { customerQuery } from '../customer/data/customerState';
 
 const style = {
@@ -39,13 +37,16 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
     modalState, editmodeText }) => {
 
     const currentCustomer = useRecoilValue(customerQuery);
+    const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery);
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
     const onOrderNumberChange = (event: any) => {
-        setNewOrder({ ...newOrder, 'number': event.target.value });
+        setNewOrder({ ...newOrder, 'number': event.target.value, 'name': event.target.value });
     };
     // const onOrderBlockedToggle = (event: any) => {
     //     setNewOrder({ ...newOrder, 'blocked': event.target.checked });
     // };
+
+    // debugger;
     return (
         <React.Fragment>
             <Modal
@@ -75,10 +76,14 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
                                 <TextField id="order-number" label="Order number" onChange={onOrderNumberChange} value={newOrder.number} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="order-customer-id" label="Customer ID (select)" onClick={() => setOpenCustomerSelector(true)} value={newOrder.customer_id} />
+                                <TextField id="order-customer-id" label="Customer ID (select)" 
+                                onClick={() => {setOpenCustomerSelector(true); refreshCustomer();}} 
+                                value={newOrder.customer_id} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="customer" label="Customer" onClick={() => setOpenCustomerSelector(true)} value={currentCustomer.name} />
+                                <TextField id="customer" label="Customer" 
+                                onClick={() => {setOpenCustomerSelector(true); refreshCustomer();}} 
+                                value={currentCustomer.name} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>
@@ -101,6 +106,7 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
                     </Grid>
                     <CustomerSelector />
                 </Box>
-            </Modal>        </React.Fragment>
+            </Modal>
+        </React.Fragment>
     );
 }

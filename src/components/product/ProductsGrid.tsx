@@ -12,7 +12,7 @@ import { deleteProduct } from './data/productDao';
 import { useEffect } from 'react';
 import { currentProductIdState, newProductDefault, newProductState, productQuery, productsFullQuery } from './data/productState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
-import { currentProdCategIdState } from '../productCategory/productCategoriesState';
+import { currentProdCategIdState } from '../productCategory/data/prodCategState';
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 
 let editmodeText = '';
@@ -28,7 +28,6 @@ export default function ProductsGrid() {
     let productToOpen = useRecoilValue(productQuery);
     const setNewProduct = useSetRecoilState(newProductState);
     const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState);
-    // const currentProdCateg = useRecoilValue(prodCategQuery);
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
     const newProduct = useRecoilValue(newProductState);
 

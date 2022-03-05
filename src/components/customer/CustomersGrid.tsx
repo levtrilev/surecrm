@@ -13,7 +13,7 @@ import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteCustomer } from './data/customerDao';
 import { currentCustomerIdState, newCustomerDefault, newCustomerState, customerQuery, customersFullQuery } from './data/customerState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
-import { currentCustomerCategIdState } from '../customerCategory/customerCategoriesState';
+import { currentCustomerCategIdState } from '../customerCateg/data/customerCategState';
 // 1. For respective Entity create new EntitiesGrid.tsx, copy "imports" part and rename entity from etalon EntitiesGrid.tsx
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 
@@ -48,6 +48,8 @@ export default function CustomersGrid() {
         } else {
             editmodeText = 'edit mode';
             setCurrentCustomerId(id);
+            // console.log('customers[4].customer.id: ', customers[4].customer.id);
+            // debugger;
             const customer = customers.find(x => x.id === id) as CustomerFullType;
             setNewCustomer(fullCustomerToCustomer(customer));
             setCurrentCustomerCategId(customer.category_id);
@@ -56,8 +58,11 @@ export default function CustomersGrid() {
     };
     const copyCustomerAction = (id: number) => {
         editmodeText = 'copy mode';
+        //console.log('copyCustomerAction = (id: ', id);
         const customer = customers.find(x => x.id === id) as CustomerFullType;
-        setNewCustomer({ ...(fullCustomerToCustomer(customer)), 'id': 0 });
+        
+        // setNewCustomer({ ...(fullCustomerToCustomer(customer)), 'id': 0 });
+        setNewCustomer({ ...(customer), 'id': 0 });
         setCurrentCustomerCategId(customer.category_id);
         setOpenEditModal(true);
     };
@@ -74,7 +79,7 @@ export default function CustomersGrid() {
         event,  // MuiEvent<React.MouseEvent<HTMLElement>>
         details, // GridCallbackDetails
     ) => {
-        console.log(params);
+        // console.log(params);
         // setDocData(params.row as DocDataType);
         //handleOpenModal();
     };

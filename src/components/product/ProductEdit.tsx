@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { putUpdatedProduct, postNewProduct } from './data/productDao';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { newProductState, productsFullQuery } from './data/productState'
-import { currentProdCategIdState, openProdCategSelectorState } from '../productCategory/productCategoriesState';
+import { currentProdCategIdState, openProdCategSelectorState } from '../productCategory/data/prodCategState';
 import { useEffect } from 'react';
 import { ProdCategSelector } from '../productCategory/ProdCategSelector';
 import { ProductEditForm } from './ProductEditForm';
@@ -20,11 +19,12 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState, setFromParre
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
     const setOpenProdCategSelector = useSetRecoilState(openProdCategSelectorState);
     const currentProdCategId = useRecoilValue(currentProdCategIdState);
-    // const currentProdCateg = useRecoilValue(currentProdCategState);
-    let navigate = useNavigate();
-    const goToEditDoc = () => {
-        navigate("/document", { replace: true });
-    }
+
+    // let navigate = useNavigate();
+    // const goToEditDoc = () => {
+    //     navigate("/document", { replace: true });
+    // }
+
     const handleClose = () => {
         setFromParrent(false);
     };
@@ -39,7 +39,7 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState, setFromParre
     };
     useEffect(() => {
         setNewProduct({ ...newProduct, 'category_id': currentProdCategId });
-        // console.log('ProductEdit useEffect fired!');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentProdCategId]);
     
     return (

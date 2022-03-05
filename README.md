@@ -1,4 +1,5 @@
-Sure CRM - An open CRM project based on React 17 (typescript), Recoil & Material-UI 5
+## Sure CRM
+Sure CRM - An open CRM project based on React 17 (typescript), Recoil & Material-UI 5.
 This is (today is 2022.03.01) only 0.01 first version, feel free to use it for any app.
 
 Contributions are welcome!

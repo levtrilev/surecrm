@@ -1,13 +1,14 @@
 import { useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
-import { currentOrderCustomerIdState, currentOrderIdState, newOrderDefault, newOrderState, ordersFullQuery } from './data/orderState'
+import { currentOrderIdState, newOrderDefault, newOrderState, ordersFullQuery } from './data/orderState'
 import { openEditModalState, showYesCancelDialogState } from '../../state/state'
+import { currentCustomerIdState } from '../customer/data/customerState';
 
 export function useEditOrderAction(id: number) {
 
     const orders = useRecoilValue(ordersFullQuery) as OrderFullType[];
     const setCurrentOrderId = useSetRecoilState(currentOrderIdState);
     const setNewOrder = useSetRecoilState(newOrderState);
-    const setCurrentOrderCustomerId = useSetRecoilState(currentOrderCustomerIdState);
+    const setCurrentOrderCustomerId = useSetRecoilState(currentCustomerIdState);
     const setOpenEditModal = useSetRecoilState(openEditModalState);
 
     const fullOrderToOrder = (order: OrderFullType) => {
@@ -34,7 +35,7 @@ export function useCopyOrderAction(id: number) {
 
     const orders = useRecoilValue(ordersFullQuery) as OrderFullType[];
     const setNewOrder = useSetRecoilState(newOrderState);
-    const setCurrentOrderCustomerId = useSetRecoilState(currentOrderCustomerIdState);
+    const setCurrentOrderCustomerId = useSetRecoilState(currentCustomerIdState);
     const setOpenEditModal = useSetRecoilState(openEditModalState);
 
     const fullOrderToOrder = (order: OrderFullType) => {

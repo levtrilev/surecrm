@@ -10,9 +10,10 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { OrderEdit } from './OrderEdit';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteOrder } from './data/orderDao';
-import { currentOrderCustomerIdState, currentOrderIdState, newOrderDefault, newOrderState, orderQuery, ordersFullQuery } from './data/orderState'
+import { currentOrderIdState, newOrderDefault, newOrderState, orderQuery, ordersFullQuery } from './data/orderState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
+import { currentCustomerIdState } from '../customer/data/customerState';
 
 let editmodeText = '';
 
@@ -26,7 +27,8 @@ export default function OrdersGrid() {
     const setCurrentOrderId = useSetRecoilState(currentOrderIdState);
     let orderToOpen = useRecoilValue(orderQuery);
     const setNewOrder = useSetRecoilState(newOrderState);
-    const setCurrentOrderCustomerId = useSetRecoilState(currentOrderCustomerIdState);
+    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
+
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
     const newOrder = useRecoilValue(newOrderState);
 
@@ -40,14 +42,15 @@ export default function OrdersGrid() {
         if (id === 0) {
             setNewOrder(newOrderDefault);
             setCurrentOrderId(0);
-            setCurrentOrderCustomerId(0); // Can not understand - no need for this line in Product
+            setCurrentCustomerId(0);
             editmodeText = 'create new mode';
         } else {
             editmodeText = 'edit mode';
             setCurrentOrderId(id);
             const order = orders.find(x => x.id === id) as OrderFullType;
             setNewOrder(fullOrderToOrder(order));
-            setCurrentOrderCustomerId(order.customer_id);
+            setCurrentCustomerId(order.customer_id);
+
         }
         setOpenEditModal(true);
     };
@@ -55,7 +58,7 @@ export default function OrdersGrid() {
         editmodeText = 'copy mode';
         const order = orders.find(x => x.id === id) as OrderFullType;
         setNewOrder({ ...(fullOrderToOrder(order)), 'id': 0 });
-        setCurrentOrderCustomerId(order.customer_id);
+        setCurrentCustomerId(order.customer_id);
         setOpenEditModal(true);
     };
     const deleteOrderAction = (id: number) => {
@@ -71,7 +74,7 @@ export default function OrdersGrid() {
         event,  // MuiEvent<React.MouseEvent<HTMLElement>>
         details, // GridCallbackDetails
     ) => {
-        console.log(params);
+        // console.log(params);
         // setDocData(params.row as DocDataType);
         //handleOpenModal();
     };

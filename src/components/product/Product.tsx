@@ -6,7 +6,7 @@ import { openEditModalState, showYesCancelDialogState } from '../../state/state'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { currentProdCategIdState } from '../productCategory/productCategoriesState';
+import { currentProdCategIdState } from '../productCategory/data/prodCategState';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 interface Props {

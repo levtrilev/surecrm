@@ -102,7 +102,8 @@ const HeaderMUI = () => {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page, index) => (
+            {pages.slice(0, 6).map((page, index) => (
+
               <Button
                 key={page}
                 // onClick={handleCloseNavMenu}

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { newOrderState, ordersFullQuery } from './data/orderState';
+import { newOrderState, orderQuery, ordersFullQuery } from './data/orderState';
 import { postNewOrder, putUpdatedOrder } from './data/orderDao';
-import CustomerSelector from '../customer/CustomerSelecorBak';
 import { currentCustomerIdState, openCustomerSelectorState } from '../customer/data/customerState';
 import { useEffect } from 'react';
 import { OrderEditForm } from './OrderEditForm';
+import { CustomerSelector } from '../customer/CustomerSelector';
 
 interface Props {
     modalState: boolean;
@@ -19,6 +19,7 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState, setFromParrent, 
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
     const setOpenCustomerSelector = useSetRecoilState(openCustomerSelectorState);
     const currentCustomerId = useRecoilValue(currentCustomerIdState);
+    const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery);
 
     const handleClose = () => {
         setFromParrent(false);
@@ -26,16 +27,18 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState, setFromParrent, 
 
     const updateOrder = (order: OrderType) => {
         if (order.id === 0) {
-            postNewOrder({ ...order, 'name': order.number });
+            postNewOrder(order);
         } else {
-            putUpdatedOrder({ ...order, 'name': order.number });
+            putUpdatedOrder(order);
         }
         setTimeout(refreshOrders, 300);
+        setTimeout(refreshOrder, 300);
     };
 
     useEffect(() => {
         setNewOrder({ ...newOrder, 'customer_id': currentCustomerId });
-        console.log('useEffect fired!');
+        // console.log('useEffect fired!');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerId]);
 
     return (

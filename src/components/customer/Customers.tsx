@@ -5,16 +5,16 @@ import {
     useRecoilRefresher_UNSTABLE,
 } from 'recoil';
 import { currentCustomerIdState, newCustomerState, customerQuery, customersQuery, customersFullQuery } from './data/customerState'
-import { Box, Button, Container, FormControl, FormHelperText, Grid, Input, InputLabel } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state';
-import { deleteCustomer, postNewCustomer } from './data/customerDao';
+import { deleteCustomer } from './data/customerDao';
 import Customer from './Customer';
 import CustomerEdit from './CustomerEdit';
 
 const Customers: React.FC = () => {
 
-    const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
+    // const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
     const customers = useRecoilValue(customersFullQuery) as CustomerFullType[];
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersQuery);
     const customerToOpen = useRecoilValue(customerQuery);
@@ -23,9 +23,9 @@ const Customers: React.FC = () => {
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
 
-    const onNewCustomerNameChange = (event: any) => {
-        setNewCustomer({ ...newCustomer, 'name': event.target.value });
-    };
+    // const onNewCustomerNameChange = (event: any) => {
+    //     setNewCustomer({ ...newCustomer, 'name': event.target.value });
+    // };
 
     useEffect(() => {
         if (yesCancel) {

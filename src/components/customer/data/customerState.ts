@@ -31,6 +31,11 @@ export const openCustomerSelectorState = atom({
   default: false,
 });
 
+export const openEditModalCustomerState = atom({
+  key: "openEditModalCustomerState",
+  default: false,
+});
+
 export const customersQuery = selector({
   key: "customersQuery",
   get: async ({ get }) => {

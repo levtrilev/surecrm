@@ -24,10 +24,10 @@ export const currentOrderIdState = atom({
   default: 0,
 });
 
-export const currentOrderCustomerIdState = atom({
-  key: "currentOrderCustomerIdState",
-  default: 0,
-});
+// export const currentOrderCustomerIdState = atom({
+//   key: "currentOrderCustomerIdState",
+//   default: 0,
+// });
 
 export const ordersQuery = selector({
   key: "ordersQuery",
