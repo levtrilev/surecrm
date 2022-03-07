@@ -5,7 +5,7 @@ import { currentCustomerIdState, newCustomerState } from './data/customerState';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { openEditModalState, showYesCancelDialogState } from '../../state/state';
-import { currentCustomerCategIdState } from '../customerCateg/data/customerCategState';
+import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 interface Props {
@@ -13,8 +13,9 @@ interface Props {
 }
 
 export const Customer: React.FC<Props> = ({ customer }) => {
+    const editContext = 'cust.' + customer.id;
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
-    const setCurrentCustomerCategId = useSetRecoilState(currentCustomerCategIdState);
+    const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const setOpenEditModal = useSetRecoilState(openEditModalState);
     const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState);
     const setNewCustomer = useSetRecoilState(newCustomerState);

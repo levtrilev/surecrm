@@ -15,8 +15,8 @@ import CssBaseline from "@mui/material/CssBaseline/CssBaseline";
 import AppBar from "@mui/material/AppBar/AppBar";
 import CustomersGrid from "./components/customer/CustomersGrid";
 import OrdersGrid from "./components/order/OrdersGrid";
-import CustomerCategGrid from "./components/customerCateg/CustomerCategGrid";
 import ProdCategGrid from "./components/productCategory/ProdCategGrid";
+import CustCategFamGrid from "./components/customerCategory/CustomerCategGrid";
 
 function App() {
   const drawerWidth = 240;
@@ -49,7 +49,7 @@ function App() {
                 <Route path="/_orders" element={<Orders />} />
                 <Route path="/_customers" element={<Customers />} />
                 <Route path="/customers" element={<CustomersGrid />} />
-                <Route path="/customer_categs" element={<CustomerCategGrid />} />
+                <Route path="/customer_categs" element={<CustCategFamGrid />} />
                 <Route path="/prod_categs" element={<ProdCategGrid />} />
               </Routes>
             </React.Suspense>

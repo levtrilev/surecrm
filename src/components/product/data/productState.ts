@@ -55,10 +55,3 @@ export const productQuery = selector({
   },
 });
 
-// export const productFullQuery = selector({
-//   key: "productFullQuery",
-//   get: async ({ get }) => {
-//     const id = get(currentProductIdState);
-//     return productFullQueryDao(id);
-//   },
-// });

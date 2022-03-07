@@ -13,9 +13,11 @@ interface Props {
     product: ProductFullType;
 }
 
+const editContext = 'self';
+
 export const Product: React.FC<Props> = ({ product }) => {
     const setCurrentProductId = useSetRecoilState(currentProductIdState);
-    const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState);
+    const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState(editContext));
     const setOpenEditModal = useSetRecoilState(openEditModalState);
     const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState);
     const setNewProduct = useSetRecoilState(newProductState);

@@ -6,9 +6,10 @@ import { Item } from '../../shared/elements';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { newProductState } from './data/productState';
-import { prodCategQuery } from '../productCategory/data/prodCategState';
+import { openProdCategSelectorState, prodCategQuery } from '../productCategory/data/prodCategState';
+import { ProdCategSelector } from '../productCategory/ProdCategSelector';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -26,19 +27,21 @@ const style = {
 
 interface Props {
     product: ProductType;
-    setOpenProdCategSelector: (selectorState: boolean) => void;
     updateProduct: (product: ProductType) => void;
-    editmodeText: string;
     handleClose: () => void;
-    ProdCategSelector: React.FC;
     modalState: boolean;
+    editmodeText: string;
 }
 
-export const ProductEditForm: React.FC<Props> = ({ product, updateProduct, editmodeText,
-    setOpenProdCategSelector, ProdCategSelector, handleClose, modalState }) => {
-    const currentProdCateg = useRecoilValue(prodCategQuery);
+export const ProductEditForm: React.FC<Props> = ({ product, updateProduct,
+    handleClose, modalState, editmodeText }) => {
+    
+    const editContext = 'prod.' + product.id;
+    const currentProdCateg = useRecoilValue(prodCategQuery(editContext));
+    const refreshProdCateg = useRecoilRefresher_UNSTABLE(prodCategQuery(editContext));
 
     const [newProduct, setNewProduct] = useRecoilState(newProductState);
+    const [openProdCategSelector, setOpenProdCategSelector] = useRecoilState(openProdCategSelectorState);
 
     const onProductVatChange = (event: any) => {
         setNewProduct({ ...newProduct, 'vat': event.target.value });
@@ -115,7 +118,7 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct, editm
                             </Grid>
                         </Grid>
                     </Grid>
-                    <ProdCategSelector />
+                    {openProdCategSelector ? <ProdCategSelector editContext={'prod.' + newProduct.id} /> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>

@@ -1,5 +1,5 @@
-import { atom, selector } from "recoil";
-import { DOMAIN, sectionId, tenantId } from "../../../shared/appConsts";
+import { atom, atomFamily, selector, selectorFamily } from "recoil";
+import { sectionId, tenantId } from "../../../shared/appConsts";
 import { prodCategQueryDao, prodCategsQueryDao } from "./prodCategDao";
 
 export const newProdCategDefault: ProductCategoryType = 
@@ -15,7 +15,7 @@ export const newProdCategState = atom({
   default: newProdCategDefault,
 });
 
-export const currentProdCategIdState = atom({
+export const currentProdCategIdState = atomFamily({
   key: "currentProdCategIdState",
   default: 0,
 });
@@ -39,35 +39,14 @@ export const prodCategsQuery = selector({
   key: "prodCategsQuery",
   get: async ({ get }) => {
     return prodCategsQueryDao();
-    // const response = await fetch(
-    //   `${DOMAIN}/product_categories`
-    // );
-    // const categories = await response.json();
-    // if (response.status !== 200) {
-    //   console.log(`Bad HTTP request status ${response.status}`);
-    // }
-    // return categories;
   },
 });
 
-export const prodCategQuery = selector({
+export const prodCategQuery = selectorFamily({
   key: "prodCategQuery",
-  get: async ({ get }) => {
-    const id = get(currentProdCategIdState);
+  get: (editContext: string) => async ({ get }) => {
+    const id = get(currentProdCategIdState(editContext));
     if (id === 0) return newProdCategDefault;
     return prodCategQueryDao(id);
-    // const response = await fetch(
-    //   `${DOMAIN}/product_categories?id=eq.${id}`
-    // );
-    // const product_category = await response.json();
-    // if (response.status !== 200) {
-    //   console.log(`Bad HTTP request status ${response.status}`);
-    // }
-    // if (product_category.length === 1) {
-    //   return product_category[0];
-    // } else {
-    //   console.log('if (product_category.length === 1)', 'false');
-    //   return null;
-    // }
   },
 });

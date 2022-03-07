@@ -8,7 +8,8 @@ import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import { newCustomerState } from './data/customerState';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { customerCategQuery } from '../customerCateg/data/customerCategState';
+import { custCategQuery, openCustCategSelectorState } from '../customerCategory/data/customerCategState';
+import { CustCategSelector } from '../customerCategory/CustomerCategSelector';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -26,22 +27,22 @@ const style = {
 
 interface Props {
     customer: CustomerType;
-    setOpenCustomerCategSelector: (selectorState: boolean) => void;
     updateCustomer: (customer: CustomerType) => void;
     handleClose: () => void;
-    CustomerCategSelector: React.FC;
     modalState: boolean;
     editmodeText: string;
 }
 
 export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
-    setOpenCustomerCategSelector, CustomerCategSelector, handleClose,
-    modalState, editmodeText }) => {
+    handleClose, modalState, editmodeText }) => {
 
-    const currentCustomerCateg = useRecoilValue(customerCategQuery);
-    const refreshCustomerCateg = useRecoilRefresher_UNSTABLE(customerCategQuery);
+    const editContext = 'cust.' + customer.id;
+    const currentCustomerCateg = useRecoilValue(custCategQuery(editContext));
+    const refreshCustomerCateg = useRecoilRefresher_UNSTABLE(custCategQuery(editContext));
 
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
+    const [openCustomerCategSelector, setOpenCustomerCategSelector] = useRecoilState(openCustCategSelectorState);
+
     const onCustomerNameChange = (event: any) => {
         setNewCustomer({ ...newCustomer, 'name': event.target.value });
     };
@@ -106,7 +107,7 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
                             </Grid>
                         </Grid>
                     </Grid>
-                    <CustomerCategSelector />
+                    {openCustomerCategSelector ? <CustCategSelector editContext={'cust.' + newCustomer.id} /> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>

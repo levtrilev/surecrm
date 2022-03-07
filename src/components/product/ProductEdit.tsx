@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { putUpdatedProduct, postNewProduct } from './data/productDao';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { newProductState, productsFullQuery } from './data/productState'
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useSetRecoilState } from 'recoil';
+import { newProductState, productQuery, productsFullQuery } from './data/productState'
 import { currentProdCategIdState, openProdCategSelectorState } from '../productCategory/data/prodCategState';
 import { useEffect } from 'react';
-import { ProdCategSelector } from '../productCategory/ProdCategSelector';
 import { ProductEditForm } from './ProductEditForm';
 
 interface Props {
@@ -15,15 +14,12 @@ interface Props {
 }
 
 export const ProductEdit: React.FC<Props> = ({ product, modalState, setFromParrent, editmodeText }) => {
+    const editContext = 'prod.' + product.id;
+
     const [newProduct, setNewProduct] = useRecoilState(newProductState);
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
-    const setOpenProdCategSelector = useSetRecoilState(openProdCategSelectorState);
-    const currentProdCategId = useRecoilValue(currentProdCategIdState);
-
-    // let navigate = useNavigate();
-    // const goToEditDoc = () => {
-    //     navigate("/document", { replace: true });
-    // }
+    const [currentProdCategId, setCurrentProdCategId] = useRecoilState(currentProdCategIdState(editContext));
+    const refreshProduct = useRecoilRefresher_UNSTABLE(productQuery);
 
     const handleClose = () => {
         setFromParrent(false);
@@ -36,8 +32,12 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState, setFromParre
             putUpdatedProduct(product);
         }
         setTimeout(refreshProducts, 300);
+        setTimeout(refreshProduct, 300);
     };
     useEffect(() => {
+        if (currentProdCategId === 0) {
+            setCurrentProdCategId(product.category_id);
+        }    
         setNewProduct({ ...newProduct, 'category_id': currentProdCategId });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentProdCategId]);
@@ -48,8 +48,6 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState, setFromParre
                 product={product}
                 updateProduct={updateProduct}
                 editmodeText={editmodeText}
-                setOpenProdCategSelector={setOpenProdCategSelector}
-                ProdCategSelector={ProdCategSelector}
                 handleClose={handleClose}
                 modalState={modalState}
             />

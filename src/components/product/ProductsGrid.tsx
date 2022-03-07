@@ -16,6 +16,7 @@ import { currentProdCategIdState } from '../productCategory/data/prodCategState'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 
 let editmodeText = '';
+const editContext = 'self';
 
 export default function ProductsGrid() {
 
@@ -27,7 +28,7 @@ export default function ProductsGrid() {
     const setCurrentProductId = useSetRecoilState(currentProductIdState);
     let productToOpen = useRecoilValue(productQuery);
     const setNewProduct = useSetRecoilState(newProductState);
-    const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState);
+    const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
     const newProduct = useRecoilValue(newProductState);
 
@@ -42,20 +43,18 @@ export default function ProductsGrid() {
             setNewProduct(newProductDefault);
             setCurrentProductId(0);
             editmodeText = 'create new mode';
-            setCurrentProdCategId(0);
         } else {
             editmodeText = 'edit mode';
             setCurrentProductId(id);
             const product = products.find(x => x.id === id) as ProductFullType;
             setNewProduct(fullProductToProduct(product));
-            setCurrentProdCategId(product.category_id);
         }
         setOpenEditModal(true);
     };
     const copyProductAction = (id: number) => {
         editmodeText = 'copy mode';
         const product = products.find(x => x.id === id) as ProductFullType;
-        setNewProduct({ ...(fullProductToProduct(product)), 'id': 0 });
+        setNewProduct({ ...(product), 'id': 0 });
         setCurrentProdCategId(product.category_id);
         setOpenEditModal(true);
     };
@@ -139,7 +138,6 @@ export default function ProductsGrid() {
         event,  // MuiEvent<React.MouseEvent<HTMLElement>>
         details, // GridCallbackDetails
     ) => {
-        console.log(params);
 
         setDocData(params.row as DocDataType);
         //handleOpenModal();
@@ -182,7 +180,6 @@ export default function ProductsGrid() {
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}
                 /> : <></>}
-
             </div>
         </>
     );

@@ -27,7 +27,6 @@ interface Props {
     dialogHeading: string;
     openSelector: boolean;
     closeSelector: () => void;
-    // itemClickHandle: (event: any, id: number) => void;
     takeItem: (id: number) => void;
     editItem: (id: number) => void;
 }

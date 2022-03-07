@@ -46,7 +46,6 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
     //     setNewOrder({ ...newOrder, 'blocked': event.target.checked });
     // };
 
-    // debugger;
     return (
         <React.Fragment>
             <Modal

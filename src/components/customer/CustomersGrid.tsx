@@ -13,11 +13,11 @@ import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteCustomer } from './data/customerDao';
 import { currentCustomerIdState, newCustomerDefault, newCustomerState, customerQuery, customersFullQuery } from './data/customerState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
-import { currentCustomerCategIdState } from '../customerCateg/data/customerCategState';
-// 1. For respective Entity create new EntitiesGrid.tsx, copy "imports" part and rename entity from etalon EntitiesGrid.tsx
+import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 
 let editmodeText = '';
+const editContext = 'self';
 
 export default function CustomersGrid() {
 
@@ -29,7 +29,7 @@ export default function CustomersGrid() {
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
     let customerToOpen = useRecoilValue(customerQuery);
     const setNewCustomer = useSetRecoilState(newCustomerState);
-    const setCurrentCustomerCategId = useSetRecoilState(currentCustomerCategIdState);
+    const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
     const newCustomer = useRecoilValue(newCustomerState);
 
@@ -43,25 +43,19 @@ export default function CustomersGrid() {
         if (id === 0) {
             setNewCustomer(newCustomerDefault);
             setCurrentCustomerId(0);
-            setCurrentCustomerCategId(0); // Can not understand - no need for this line in Product
             editmodeText = 'create new mode';
         } else {
             editmodeText = 'edit mode';
             setCurrentCustomerId(id);
-            // console.log('customers[4].customer.id: ', customers[4].customer.id);
-            // debugger;
             const customer = customers.find(x => x.id === id) as CustomerFullType;
             setNewCustomer(fullCustomerToCustomer(customer));
-            setCurrentCustomerCategId(customer.category_id);
         }
         setOpenEditModal(true);
     };
     const copyCustomerAction = (id: number) => {
         editmodeText = 'copy mode';
-        //console.log('copyCustomerAction = (id: ', id);
         const customer = customers.find(x => x.id === id) as CustomerFullType;
         
-        // setNewCustomer({ ...(fullCustomerToCustomer(customer)), 'id': 0 });
         setNewCustomer({ ...(customer), 'id': 0 });
         setCurrentCustomerCategId(customer.category_id);
         setOpenEditModal(true);
@@ -96,7 +90,6 @@ export default function CustomersGrid() {
     }, [currentCustomerId, yesCancel]);
 
     function getCategory(params: any) {
-        // return `Заглушка`;
         return `${params.row.customer_categories?.name || ''}`;
     };
     const prodColumns: GridColDef[] = [

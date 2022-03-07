@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentCustomerIdState, customerQuery, customersQuery, newCustomerDefault, newCustomerState, openEditModalCustomerState } from './data/customerState';
 import { openCustomerSelectorState } from './data/customerState';
 import SelectorBody from '../../shared/SelectorBody';
-import { currentCustomerCategIdState } from '../customerCateg/data/customerCategState';
+import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import CustomerEdit from './CustomerEdit';
 
 let editmodeText = '';
@@ -18,7 +18,7 @@ export function CustomerSelector() {
 
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
-    const setCurrentCustomerCategId = useSetRecoilState(currentCustomerCategIdState);
+    const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState('self'));
     const [openEditModalCustomer, setOpenEditModalCustomer] = useRecoilState(openEditModalCustomerState);
     let customerToOpen = useRecoilValue(customerQuery);
 

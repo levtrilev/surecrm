@@ -9,11 +9,12 @@ interface Props {
     setFromParrent: SetOpenModal;
     prodCateg: ProductCategoryType;
     editmodeText: string;
+    editContext: string;
 }
 
-export const ProdCategEdit: React.FC<Props> = ({ prodCateg, modalState, setFromParrent, editmodeText }) => {
+export const ProdCategEdit: React.FC<Props> = ({ prodCateg, modalState, setFromParrent, editmodeText, editContext }) => {
     const refreshProdCategs = useRecoilRefresher_UNSTABLE(prodCategsQuery);
-    const refreshProdCateg = useRecoilRefresher_UNSTABLE(prodCategQuery);
+    const refreshProdCateg = useRecoilRefresher_UNSTABLE(prodCategQuery(editContext));
     
     const handleClose = () => {
         setFromParrent(false);

@@ -13,12 +13,12 @@ export const pages = [
   "Products",
   "Customers",
   "Orders",
-  "Posts",
   "Customer categ",
   "Product categ",
   "Products_",
   "Customers_",
   "Orders_",
+  "Posts",
 ];
 export const navSvgIcons = [
   ProductionQuantityLimitsIcon,
@@ -30,6 +30,7 @@ export const navSvgIcons = [
   InboxIcon,
   MailIcon,
   AccountCircleIcon,
+  DraftsIcon,
 ];
 
 export const handleMenuItemClick = (
@@ -48,22 +49,22 @@ export const handleMenuItemClick = (
       navigate("/orders", { replace: true });
       break;
     case 3:
-      navigate("/posts", { replace: true });
-      break;
-    case 4:
       navigate("/customer_categs", { replace: true });
       break;
-    case 5:
+    case 4:
       navigate("/prod_categs", { replace: true });
       break;
-    case 6:
+    case 5:
       navigate("/_products", { replace: true });
       break;
-    case 7:
+    case 6:
       navigate("/_customers", { replace: true });
       break;
-    case 8:
+    case 7:
       navigate("/_orders", { replace: true });
+      break;
+    case 8:
+      navigate("/posts", { replace: true });
       break;
     default:
       navigate("/", { replace: true });

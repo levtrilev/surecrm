@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { putUpdatedCustomerCateg, postNewCustomerCateg } from './data/customerCategDao';
 import { useRecoilRefresher_UNSTABLE } from 'recoil';
-import { customerCategQuery, customerCategsQuery } from './data/customerCategState'
+import { custCategQuery, custCategsQuery } from './data/customerCategState'
 import { CustomerCategEditForm } from './CustomerCategEditForm';
 
 interface Props {
@@ -9,12 +9,12 @@ interface Props {
     setFromParrent: SetOpenModal;
     customerCateg: CustomerCategoryType;
     editmodeText: string;
+    editContext: string;
 }
 
-export const CustomerCategEdit: React.FC<Props> = ({ customerCateg, modalState, setFromParrent, editmodeText }) => {
-    // const [newCustomerCateg, setNewCustomerCateg] = useRecoilState(newCustomerCategState);
-    const refreshCustomerCategs = useRecoilRefresher_UNSTABLE(customerCategsQuery);
-    const refreshCustomerCateg = useRecoilRefresher_UNSTABLE(customerCategQuery);
+export const CustomerCategEdit: React.FC<Props> = ({ customerCateg, modalState, setFromParrent, editmodeText, editContext }) => {
+    const refreshCustomerCategs = useRecoilRefresher_UNSTABLE(custCategsQuery);
+    const refreshCustomerCateg = useRecoilRefresher_UNSTABLE(custCategQuery(editContext));
     
     const handleClose = () => {
         setFromParrent(false);

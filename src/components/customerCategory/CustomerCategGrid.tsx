@@ -11,24 +11,25 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
-import { currentCustomerCategIdState, customerCategQuery, customerCategsQuery, newCustomerCategDefault, newCustomerCategState } from './data/customerCategState';
+import { currentCustCategIdState, custCategQuery, custCategsQuery, newCustCategDefault, newCustCategState } from './data/customerCategState';
 import { deleteCustomerCateg } from './data/customerCategDao';
 import CustomerCategEdit from './CustomerCategEdit';
 
 let editmodeText = '';
+let editContext = 'self';
 
-export default function CustomerCategGrid() {
+export default function CustCategFamGrid() {
 
-    const customerCategs = useRecoilValue(customerCategsQuery) as CustomerCategoryType[];
-    const refreshCustomerCategs = useRecoilRefresher_UNSTABLE(customerCategsQuery);
+    const customerCategs = useRecoilValue(custCategsQuery) as CustomerCategoryType[];
+    const refreshCustomerCategs = useRecoilRefresher_UNSTABLE(custCategsQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
-    const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustomerCategIdState);
-    let customerCategToOpen = useRecoilValue(customerCategQuery);
-    const setNewCustomerCateg = useSetRecoilState(newCustomerCategState);
+    const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustCategIdState(editContext));
+    let customerCategToOpen = useRecoilValue(custCategQuery(editContext));
+    const setNewCustomerCateg = useSetRecoilState(newCustCategState);
 
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const newCustomerCateg = useRecoilValue(newCustomerCategState);
+    const newCustomerCateg = useRecoilValue(newCustCategState);
 
     // const fullProductToProduct = (product: ProductFullType) => {
     //     let { product_categories, ...newProduct } = product;
@@ -36,7 +37,7 @@ export default function CustomerCategGrid() {
     // };
     const editCustomerCategAction = (id: number) => {
         if (id === 0) {
-            setNewCustomerCateg(newCustomerCategDefault);
+            setNewCustomerCateg(newCustCategDefault);
             setCurrentCustomerCategId(0);
             editmodeText = 'create new mode';
         } else {
@@ -76,13 +77,6 @@ export default function CustomerCategGrid() {
             width: 300,
             editable: false,
         },
-        // {
-        //     field: 'blocked',
-        //     type: 'boolean',
-        //     headerName: 'Blocked',
-        //     width: 90,
-        //     editable: false,
-        // },
         {
             field: 'actions',
             headerName: 'Actions',
@@ -141,6 +135,7 @@ export default function CustomerCategGrid() {
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}
+                    editContext={editContext}
                 /> : <></>}
 
             </div>

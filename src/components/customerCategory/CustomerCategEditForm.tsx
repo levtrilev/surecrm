@@ -5,7 +5,7 @@ import { Grid, TextField, Typography } from '@mui/material';
 import { Item } from '../../shared/elements';
 import Button from '@mui/material/Button';
 import { useRecoilState } from 'recoil';
-import { newCustomerCategState } from './data/customerCategState';
+import { newCustCategState } from './data/customerCategState';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -31,7 +31,7 @@ interface Props {
 
 export const CustomerCategEditForm: React.FC<Props> = ({ customerCateg, updateCustomerCateg, editmodeText,
     handleClose, modalState }) => {
-    const [newCustomerCateg, setNewCustomerCateg] = useRecoilState(newCustomerCategState);
+    const [newCustomerCateg, setNewCustomerCateg] = useRecoilState(newCustCategState);
 
     const onCustomerCategNameChange = (event: any) => {
         setNewCustomerCateg({ ...newCustomerCateg, 'name': event.target.value });

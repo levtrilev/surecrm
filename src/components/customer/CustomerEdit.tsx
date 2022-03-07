@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { postNewCustomer, putUpdatedCustomer } from './data/customerDao';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState } from 'recoil';
 import { newCustomerState, customersFullQuery, customerQuery } from './data/customerState'
-import { currentCustomerCategIdState, openCustomerCategSelectorState } from '../customerCateg/data/customerCategState';
+import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import { useEffect } from 'react';
-import { CustomerCategSelector } from '../customerCateg/CustomerCategSelector';
 import { CustomerEditForm } from './CustomerEditForm';
 
 interface Props {
@@ -15,10 +14,11 @@ interface Props {
 }
 
 export const CustomerEdit: React.FC<Props> = ({ customer, modalState, setFromParrent, editmodeText }) => {
+    const editContext = 'cust.' + customer.id;
+
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
-    const setOpenCustomerCategSelector = useSetRecoilState(openCustomerCategSelectorState);
-    const currentCustomerCategId = useRecoilValue(currentCustomerCategIdState);
+    const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustCategIdState(editContext));
     const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery);
 
     const handleClose = () => {
@@ -34,7 +34,11 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState, setFromPar
         setTimeout(refreshCustomers, 300);
         setTimeout(refreshCustomer, 300);
     };
+
     useEffect(() => {
+    if (currentCustomerCategId === 0) {
+        setCurrentCustomerCategId(customer.category_id);
+    }
         setNewCustomer({ ...newCustomer, 'category_id': currentCustomerCategId });
         // console.log('useEffect fired!');
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,8 +48,6 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState, setFromPar
             <CustomerEditForm
                 customer={customer}
                 updateCustomer={updateCustomer}
-                setOpenCustomerCategSelector={setOpenCustomerCategSelector}
-                CustomerCategSelector={CustomerCategSelector}
                 handleClose={handleClose}
                 modalState={modalState}
                 editmodeText={editmodeText}

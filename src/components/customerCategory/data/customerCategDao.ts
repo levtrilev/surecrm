@@ -31,7 +31,7 @@ export async function deleteCustomerCateg(id: number) {
     console.log(response.status, response.url);
 }
 
-export const customerCategsQueryDao = async () => {
+export const custCategsQueryDao = async () => {
     const response = await fetch(
         `${DOMAIN}/customer_categories`
       );
@@ -42,7 +42,7 @@ export const customerCategsQueryDao = async () => {
       return categories;
 };
 
-export const customerCategQueryDao = async (id: number) => {
+export const custCategQueryDao = async (id: number) => {
     const response = await fetch(
         `${DOMAIN}/customer_categories?id=eq.${id}`
       );

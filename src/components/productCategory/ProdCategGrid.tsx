@@ -17,6 +17,7 @@ import { deleteProdCateg } from './data/prodCategDao';
 import ProdCategEdit from './ProdCategEdit';
 
 let editmodeText = '';
+let editContext = 'self';
 
 export default function ProdCategGrid() {
 
@@ -24,8 +25,8 @@ export default function ProdCategGrid() {
     const refreshProdCategs = useRecoilRefresher_UNSTABLE(prodCategsQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
-    const [currentProdCategId, setCurrentProdCategId] = useRecoilState(currentProdCategIdState);
-    let prodCategToOpen = useRecoilValue(prodCategQuery);
+    const [currentProdCategId, setCurrentProdCategId] = useRecoilState(currentProdCategIdState(editContext));
+    let prodCategToOpen = useRecoilValue(prodCategQuery(editContext));
     const setNewProdCateg = useSetRecoilState(newProdCategState);
 
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
@@ -130,6 +131,7 @@ export default function ProdCategGrid() {
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}
+                    editContext={editContext}
                 /> : <></>}
 
             </div>
