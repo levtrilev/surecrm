@@ -31,6 +31,8 @@ export const CustomerCategEdit: React.FC<Props> = ({ customerCateg, modalState,
     const handleClose = () => {
         if (isModified) {
             setShowYesNoCancelDialog(true);
+        } else {
+            setFromParrent(false);
         }
     };
 

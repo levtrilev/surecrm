@@ -30,8 +30,9 @@ export const ProdCategEdit: React.FC<Props> = ({ prodCateg, modalState, setFromP
     const handleClose = () => {
         if (isModified) {
             setShowYesNoCancelDialog(true);
+        } else {
+            setFromParrent(false);
         }
-        // setFromParrent(false);
     };
 
     const updateProdCateg = () => {
@@ -48,14 +49,11 @@ export const ProdCategEdit: React.FC<Props> = ({ prodCateg, modalState, setFromP
     useEffect(() => {
         if (yesNoCancel === 'yes') {
             updateProdCateg();
-            setYesNoCancel('neutral');
             setFromParrent(false);
         } else if (yesNoCancel === 'no') {
-            setYesNoCancel('neutral');
             setFromParrent(false);
-        } else {
-            setYesNoCancel('neutral');
         }
+        setYesNoCancel('neutral');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [yesNoCancel]);
 
