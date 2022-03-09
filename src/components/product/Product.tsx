@@ -9,17 +9,17 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { currentProdCategIdState } from '../productCategory/data/prodCategState';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
+let editContext = 'Products';
+
 interface Props {
     product: ProductFullType;
 }
 
-const editContext = 'self';
-
 export const Product: React.FC<Props> = ({ product }) => {
-    const setCurrentProductId = useSetRecoilState(currentProductIdState);
+    const setCurrentProductId = useSetRecoilState(currentProductIdState(editContext));
     const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState(editContext));
     const setOpenEditModal = useSetRecoilState(openEditModalState);
-    const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState);
+    const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState(editContext));
     const setNewProduct = useSetRecoilState(newProductState);
 
     const fullPtoductToProduct = (product: ProductFullType) => {

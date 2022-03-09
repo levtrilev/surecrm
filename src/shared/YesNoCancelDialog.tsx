@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import { useSetRecoilState } from 'recoil';
-import { showYesCancelDialogState, yesCancelState } from '../state/state';
+import { showYesNoCancelDialogState, yesNoCancelState } from '../state/state';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -28,10 +28,10 @@ interface Props {
 }
 
 
-export const YesCancelDialog: React.FC<Props> = ({ questionToConfirm, modalState, setFromParrent, editContext }) => {
+export const YesNoCancelDialog: React.FC<Props> = ({ questionToConfirm, modalState, setFromParrent, editContext }) => {
 
-    const setYesCancel = useSetRecoilState(yesCancelState(editContext));
-    const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState(editContext));
+    const setYesNoCancel = useSetRecoilState(yesNoCancelState(editContext));
+    const setShowYesNoCancelDialog = useSetRecoilState(showYesNoCancelDialogState(editContext));
 
     const handleClose = () => {
         setFromParrent(false);
@@ -48,8 +48,9 @@ export const YesCancelDialog: React.FC<Props> = ({ questionToConfirm, modalState
                 <Box sx={{ ...style, width: 400 }}>
                     <h2 id="parent-modal-title">{questionToConfirm}</h2>
                     <div>
-                        <Button onClick={()=>{setYesCancel(true); setShowYesCancelDialog(false);}}>Yes</Button>
-                        <Button onClick={()=>{setYesCancel(false); setShowYesCancelDialog(false);}}>Cancel</Button>
+                        <Button onClick={()=>{setYesNoCancel('yes'); setShowYesNoCancelDialog(false);}}>Yes</Button>
+                        <Button onClick={()=>{setYesNoCancel('no'); setShowYesNoCancelDialog(false);}}>No</Button>
+                        <Button onClick={()=>{setYesNoCancel('cancel'); setShowYesNoCancelDialog(false);}}>Cancel</Button>
                     </div>
                 </Box>
             </Modal>
@@ -57,4 +58,4 @@ export const YesCancelDialog: React.FC<Props> = ({ questionToConfirm, modalState
     );
 }
 
-export default YesCancelDialog;
+export default YesNoCancelDialog;

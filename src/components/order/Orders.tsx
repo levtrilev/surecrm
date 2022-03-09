@@ -12,19 +12,20 @@ import YesCancelDialog from '../../shared/YesCancelDialog';
 import OrderEdit from './OrderEdit';
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state';
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
-// import {useEditOrderAction } from './useOrderActions';
+
+let editContext='Orders';
 
 const Orders: React.FC = () => {
 
     // const [newOrder, setNewOrder] = useRecoilState(newOrderState);
     const orders = useRecoilValue(ordersFullQuery) as OrderFullType[];
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
-    const orderToOpen = useRecoilValue(orderQuery);
-    const currentOrderId = useRecoilValue(currentOrderIdState);
+    const orderToOpen = useRecoilValue(orderQuery(editContext));
+    const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
 
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
 
     // const editOrderAction = useEditOrderAction;
 
@@ -72,8 +73,10 @@ const Orders: React.FC = () => {
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={'edit mode'}
+                outerEditContext={editContext}
             /> : <></>}
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Order (id = ${orderToOpen.id}) ?`} modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Order (id = ${orderToOpen.id}) ?`} 
+            modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
         </div>
     )
 }

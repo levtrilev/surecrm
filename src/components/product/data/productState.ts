@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom, atomFamily, selector, selectorFamily } from "recoil";
 import { sectionId, tenantId } from "../../../shared/appConsts";
 import {
   // productFullQueryDao,
@@ -23,11 +23,6 @@ export const newProductState = atom({
   default: newProductDefault,
 });
 
-export const currentProductIdState = atom({
-  key: "currentProductIdState",
-  default: 0,
-});
-
 export const openProductSelectorState = atom({
   key: "openProductSelectorState",
   default: false,
@@ -47,11 +42,15 @@ export const productsFullQuery = selector({
   },
 });
 
-export const productQuery = selector({
+export const productQuery = selectorFamily({
   key: "productQuery",
-  get: async ({ get }) => {
-    const id = get(currentProductIdState);
+  get: (editContext: string) => async ({ get }) => {
+    const id = get(currentProductIdState(editContext));
     return productQueryDao(id);
   },
 });
 
+export const currentProductIdState = atomFamily({
+  key: "currentProductIdState",
+  default: 0,
+});

@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom, atomFamily, selector, selectorFamily } from "recoil";
 import { sectionId, tenantId } from "../../../shared/appConsts";
 import { orderQueryDao, ordersFullQueryDao, ordersQueryDao } from "./orderDao";
 
@@ -19,16 +19,6 @@ export const newOrderState = atom({
   default: newOrderDefault,
 });
 
-export const currentOrderIdState = atom({
-  key: "currentOrderIdState",
-  default: 0,
-});
-
-// export const currentOrderCustomerIdState = atom({
-//   key: "currentOrderCustomerIdState",
-//   default: 0,
-// });
-
 export const ordersQuery = selector({
   key: "ordersQuery",
   get: async ({ get }) => {
@@ -36,17 +26,22 @@ export const ordersQuery = selector({
   },
 });
 
-export const orderQuery = selector({
-  key: "orderQuery",
-  get: async ({ get }) => {
-    const id = get(currentOrderIdState);
-    return orderQueryDao(id);
-  },
-});
-
 export const ordersFullQuery = selector({
   key: "ordersFullQuery",
   get: async ({ get }) => {
     return ordersFullQueryDao();
+  },
+});
+
+export const currentOrderIdState = atomFamily({
+  key: "currentOrderIdState",
+  default: 0,
+});
+
+export const orderQuery = selectorFamily({
+  key: "orderQuery",
+  get: (editContext: string) => async ({ get }) => {
+    const id = get(currentOrderIdState(editContext));
+    return orderQueryDao(id);
   },
 });

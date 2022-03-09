@@ -7,9 +7,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import { newCustomerState } from './data/customerState';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { custCategQuery, openCustCategSelectorState } from '../customerCategory/data/customerCategState';
 import { CustCategSelector } from '../customerCategory/CustomerCategSelector';
+import { isModifiedState } from '../../state/state';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -27,27 +28,31 @@ const style = {
 
 interface Props {
     customer: CustomerType;
-    updateCustomer: (customer: CustomerType) => void;
+    updateCustomer: () => void;
     handleClose: () => void;
     modalState: boolean;
     editmodeText: string;
+    editContext: string;
 }
 
 export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
-    handleClose, modalState, editmodeText }) => {
+    handleClose, modalState, editmodeText, editContext }) => {
+    const localEditContext = 'Customer.' + customer.id
 
-    const editContext = 'cust.' + customer.id;
     const currentCustomerCateg = useRecoilValue(custCategQuery(editContext));
     const refreshCustomerCateg = useRecoilRefresher_UNSTABLE(custCategQuery(editContext));
 
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
+    const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
     const [openCustomerCategSelector, setOpenCustomerCategSelector] = useRecoilState(openCustCategSelectorState);
 
     const onCustomerNameChange = (event: any) => {
         setNewCustomer({ ...newCustomer, 'name': event.target.value });
+        setIsModified(true);
     };
     const onCustomerBlockedToggle = (event: any) => {
         setNewCustomer({ ...newCustomer, 'blocked': event.target.checked });
+        setIsModified(true);
     };
     return (
         <React.Fragment>
@@ -79,19 +84,19 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
                                 <TextField id="customer-name" label="Customer name" onChange={onCustomerNameChange} value={newCustomer.name} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="customer-category-id" label="Category ID (select)" 
-                                onClick={() => {setOpenCustomerCategSelector(true); refreshCustomerCateg();}}
-                                value={newCustomer.category_id} />
+                                <TextField id="customer-category-id" label="Category ID (select)"
+                                    onClick={() => { setOpenCustomerCategSelector(true); refreshCustomerCateg(); }}
+                                    value={newCustomer.category_id} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="customer-category" label="Category" 
-                                onClick={() => {setOpenCustomerCategSelector(true); refreshCustomerCateg();}} 
-                                value={currentCustomerCateg.name} />
+                                <TextField id="customer-category" label="Category"
+                                    onClick={() => { setOpenCustomerCategSelector(true); refreshCustomerCateg(); }}
+                                    value={currentCustomerCateg.name} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <Button onClick={() => {updateCustomer(newCustomer)}}>
+                                <Button onClick={updateCustomer}>
                                     save
                                 </Button>
                             </Grid>
@@ -107,7 +112,7 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
                             </Grid>
                         </Grid>
                     </Grid>
-                    {openCustomerCategSelector ? <CustCategSelector editContext={'cust.' + newCustomer.id} /> : <></>}
+                    {openCustomerCategSelector ? <CustCategSelector editContext={editContext} /> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>

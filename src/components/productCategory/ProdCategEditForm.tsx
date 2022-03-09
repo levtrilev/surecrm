@@ -4,8 +4,9 @@ import Modal from '@mui/material/Modal';
 import { Grid, TextField, Typography } from '@mui/material';
 import { Item } from '../../shared/elements';
 import Button from '@mui/material/Button';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { newProdCategState } from './data/prodCategState';
+import { isModifiedState } from '../../state/state';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -23,22 +24,25 @@ const style = {
 
 interface Props {
     prodCateg: ProductCategoryType;
-    updateProdCateg: (prodCateg: ProductCategoryType) => void;
+    updateProdCateg: () => void;
     editmodeText: string;
     handleClose: () => void;
     modalState: boolean;
+    editContext: string;
 }
 
 export const ProdCategEditForm: React.FC<Props> = ({ prodCateg, updateProdCateg, editmodeText,
-    handleClose, modalState }) => {
+    handleClose, modalState, editContext }) => {
+
+    const localEditContext = 'ProdCateg.' + prodCateg.id
+
     const [newProdCateg, setNewProdCateg] = useRecoilState(newProdCategState);
+    const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
 
     const onProdCategNameChange = (event: any) => {
         setNewProdCateg({ ...newProdCateg, 'name': event.target.value });
+        setIsModified(true);
     };
-    // const onCustomerCategBlockedToggle = (event: any) => {
-    //     setNewCustomerCateg({ ...newCustomerCateg, 'blocked': event.target.checked });
-    // };
 
     return (
         <React.Fragment>
@@ -87,7 +91,7 @@ export const ProdCategEditForm: React.FC<Props> = ({ prodCateg, updateProdCateg,
 
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <Button onClick={() => updateProdCateg(newProdCateg)}>
+                                <Button onClick={updateProdCateg}>
                                     save
                                 </Button>
                             </Grid>

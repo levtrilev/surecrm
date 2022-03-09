@@ -7,17 +7,20 @@ import EditIcon from '@mui/icons-material/Edit';
 import { openEditModalState, showYesCancelDialogState } from '../../state/state';
 import { currentCustomerIdState } from '../customer/data/customerState';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-// import {useDeleteOrderAction } from './useOrderActions';
+
+let editContext = 'Orders';
 
 interface Props {
     order: OrderFullType;
 }
 
 export const Order: React.FC<Props> = ({ order }) => {
-    const setCurrentOrderId = useSetRecoilState(currentOrderIdState);
-    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState)
+    const editContext = 'ordr.' + order.id;
+
+    const setCurrentOrderId = useSetRecoilState(currentOrderIdState(editContext));
+    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext))
     const setOpenEditModal = useSetRecoilState(openEditModalState);
-    const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState);
+    const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState(editContext));
     const setNewOrder = useSetRecoilState(newOrderState);
 
     // const editOrderAction = useEditOrderAction;

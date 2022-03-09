@@ -5,44 +5,73 @@ import { newCustomerState, customersFullQuery, customerQuery } from './data/cust
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import { useEffect } from 'react';
 import { CustomerEditForm } from './CustomerEditForm';
+import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
+import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 
 interface Props {
     modalState: boolean;
     setFromParrent: SetOpenModal;
     customer: CustomerType;
     editmodeText: string;
+    outerEditContext: string;
 }
 
-export const CustomerEdit: React.FC<Props> = ({ customer, modalState, setFromParrent, editmodeText }) => {
-    const editContext = 'cust.' + customer.id;
+export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
+    setFromParrent, editmodeText, outerEditContext }) => {
+    const localEditContext = 'Customer.' + customer.id;
+
+    const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
+    const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery(outerEditContext));
 
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
-    const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
-    const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustCategIdState(editContext));
-    const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery);
+    const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustCategIdState(outerEditContext));
+
+    const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
+    const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
+    const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
 
     const handleClose = () => {
-        setFromParrent(false);
+        if (isModified) {
+            setShowYesNoCancelDialog(true);
+        } else {
+            setFromParrent(false);
+        }
     };
 
-    const updateCustomer = (customer: CustomerType) => {
-        if (customer.id === 0) {
-            postNewCustomer(customer);
+    const updateCustomer = () => {
+        if (newCustomer.id === 0) {
+            postNewCustomer(newCustomer);
         } else {
-            putUpdatedCustomer(customer);
+            putUpdatedCustomer(newCustomer);
         }
+        setIsModified(false);
         setTimeout(refreshCustomers, 300);
         setTimeout(refreshCustomer, 300);
     };
 
     useEffect(() => {
-    if (currentCustomerCategId === 0) {
-        setCurrentCustomerCategId(customer.category_id);
-    }
+        if (currentCustomerCategId === 0) {
+            setCurrentCustomerCategId(customer.category_id);
+        }
         setNewCustomer({ ...newCustomer, 'category_id': currentCustomerCategId });
-        // console.log('useEffect fired!');
+        setIsModified(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerCategId]);
+
+    useEffect(() => {
+        if (yesNoCancel === 'yes') {
+            updateCustomer();
+            setYesNoCancel('neutral');
+            setFromParrent(false);
+        } else if (yesNoCancel === 'no') {
+            setYesNoCancel('neutral');
+            setFromParrent(false);
+        } else {
+            setYesNoCancel('neutral');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [yesNoCancel]);
+
     return (
         <div>
             <CustomerEditForm
@@ -51,7 +80,14 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState, setFromPar
                 handleClose={handleClose}
                 modalState={modalState}
                 editmodeText={editmodeText}
+                editContext={outerEditContext}
             />
+            {showYesNoCancelDialog ? <YesNoCancelDialog
+                questionToConfirm={`Save changes (id = ${customer.id}) ?`}
+                modalState={showYesNoCancelDialog}
+                setFromParrent={setShowYesNoCancelDialog}
+                editContext={localEditContext}
+            /> : <></>}
         </div>
     );
 }

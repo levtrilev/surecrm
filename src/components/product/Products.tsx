@@ -13,21 +13,18 @@ import { ProductEdit } from './ProductEdit';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteProduct } from './data/productDao';
 
+let editContext = 'Products';
+
 const Products: React.FC = () => {
 
     const products = useRecoilValue(productsFullQuery) as ProductFullType[];
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
-    // const [newProduct, setNewProduct] = useRecoilState(newProductState);
-    const productToOpen = useRecoilValue(productQuery);
+    const productToOpen = useRecoilValue(productQuery(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
-    const currentProductId = useRecoilValue(currentProductIdState);
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
+    const currentProductId = useRecoilValue(currentProductIdState(editContext));
     let editmodeText = 'edit mode';
-
-    // const onNewProductNameChange = (event: any) => {
-    //     setNewProduct({ ...newProduct, 'name': event.target.value });
-    // };
 
     useEffect(() => {
         if (yesCancel) {
@@ -64,8 +61,10 @@ const Products: React.FC = () => {
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={editmodeText}
+                outerEditContext={editContext}
             /> : <></>}
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${productToOpen.id}) ?`} modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${productToOpen.id}) ?`} 
+            modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext}/> : <></>}
         </div>
     )
 }

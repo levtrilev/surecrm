@@ -6,10 +6,11 @@ import { Item } from '../../shared/elements';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { newProductState } from './data/productState';
 import { openProdCategSelectorState, prodCategQuery } from '../productCategory/data/prodCategState';
 import { ProdCategSelector } from '../productCategory/ProdCategSelector';
+import { isModifiedState } from '../../state/state';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -27,33 +28,39 @@ const style = {
 
 interface Props {
     product: ProductType;
-    updateProduct: (product: ProductType) => void;
+    updateProduct: () => void;
     handleClose: () => void;
     modalState: boolean;
     editmodeText: string;
+    editContext: string;
 }
 
 export const ProductEditForm: React.FC<Props> = ({ product, updateProduct,
-    handleClose, modalState, editmodeText }) => {
-    
-    const editContext = 'prod.' + product.id;
+    handleClose, modalState, editmodeText, editContext }) => {
+    const localEditContext = 'Product.' + product.id;
+
     const currentProdCateg = useRecoilValue(prodCategQuery(editContext));
     const refreshProdCateg = useRecoilRefresher_UNSTABLE(prodCategQuery(editContext));
 
     const [newProduct, setNewProduct] = useRecoilState(newProductState);
+    const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
     const [openProdCategSelector, setOpenProdCategSelector] = useRecoilState(openProdCategSelectorState);
 
     const onProductVatChange = (event: any) => {
         setNewProduct({ ...newProduct, 'vat': event.target.value });
+        setIsModified(true);
     };
     const onProductNameChange = (event: any) => {
         setNewProduct({ ...newProduct, 'name': event.target.value });
+        setIsModified(true);
     };
     const onProductBlockedToggle = (event: any) => {
         setNewProduct({ ...newProduct, 'blocked': event.target.checked });
+        setIsModified(true);
     };
     const onProductBasePriceChange = (event: any) => {
         setNewProduct({ ...newProduct, 'base_price': event.target.value });
+        setIsModified(true);
     };
     return (
         <React.Fragment>
@@ -82,27 +89,37 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct,
                     <Grid container spacing={1}>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <TextField id="product-name" label="Product name" onChange={onProductNameChange} value={newProduct.name} />
+                                <TextField id="product-name" label="Product name" 
+                                onChange={onProductNameChange} 
+                                value={newProduct.name} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-category-id" label="Category ID (select)" onClick={() => setOpenProdCategSelector(true)} value={newProduct.category_id} />
+                                <TextField id="product-category-id" label="Category ID (select)" 
+                                onClick={() => setOpenProdCategSelector(true)} 
+                                value={newProduct.category_id} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-category" label="Category" onClick={() => setOpenProdCategSelector(true)} value={currentProdCateg.name} />
+                                <TextField id="product-category" label="Category" 
+                                onClick={() => setOpenProdCategSelector(true)} 
+                                value={currentProdCateg.name} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <TextField id="product-base-price" label="Base price" onChange={onProductBasePriceChange} value={newProduct.base_price} />
+                                <TextField id="product-base-price" label="Base price" 
+                                onChange={onProductBasePriceChange} 
+                                value={newProduct.base_price} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-vat" label="VAT,%" onChange={onProductVatChange} value={newProduct.vat} />
+                                <TextField id="product-vat" label="VAT,%" 
+                                onChange={onProductVatChange} 
+                                value={newProduct.vat} />
                             </Grid>
                         </Grid>
 
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <Button onClick={() => updateProduct(newProduct)}>
+                                <Button onClick={updateProduct}>
                                     save
                                 </Button>
                             </Grid>
@@ -118,7 +135,7 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct,
                             </Grid>
                         </Grid>
                     </Grid>
-                    {openProdCategSelector ? <ProdCategSelector editContext={'prod.' + newProduct.id} /> : <></>}
+                    {openProdCategSelector ? <ProdCategSelector editContext={editContext} /> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>

@@ -8,16 +8,18 @@ import { openEditModalState, showYesCancelDialogState } from '../../state/state'
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
+let editContext = 'Customers';
+
 interface Props {
     customer: CustomerFullType;
 }
 
 export const Customer: React.FC<Props> = ({ customer }) => {
     const editContext = 'cust.' + customer.id;
-    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
+    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
     const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const setOpenEditModal = useSetRecoilState(openEditModalState);
-    const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState);
+    const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState(editContext));
     const setNewCustomer = useSetRecoilState(newCustomerState);
 
     const fullCustomerToCustomer = (customer: CustomerFullType) => {

@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom, atomFamily, selector, selectorFamily } from "recoil";
 import { sectionId, tenantId } from "../../../shared/appConsts";
 import {
   // customerFullQueryDao,
@@ -21,11 +21,6 @@ export const newCustomerState = atom({
   default: newCustomerDefault,
 });
 
-export const currentCustomerIdState = atom({
-  key: "currentCustomerIdState",
-  default: 0,
-});
-
 export const openCustomerSelectorState = atom({
   key: "openCustomerSelectorlState",
   default: false,
@@ -43,14 +38,6 @@ export const customersQuery = selector({
   },
 });
 
-export const customerQuery = selector({
-  key: "customerQuery",
-  get: async ({ get }) => {
-    const id = get(currentCustomerIdState);
-    if (id === 0) return newCustomerDefault;
-    return customerQueryDao(id);
-  },
-});
 
 export const customersFullQuery = selector({
   key: "customersFullQuery",
@@ -59,10 +46,16 @@ export const customersFullQuery = selector({
   },
 });
 
-// export const customerFullQuery = selector({
-//   key: "customerFullQuery",
-//   get: async ({ get }) => {
-//     const id = get(currentCustomerIdState);
-//     return customerFullQueryDao(id);
-//   },
-// });
+export const currentCustomerIdState = atomFamily({
+  key: "currentCustomerIdState",
+  default: 0,
+});
+
+export const customerQuery = selectorFamily({
+  key: "customerQuery",
+  get: (editContext: string) => async ({ get }) => {
+    const id = get(currentCustomerIdState(editContext));
+    if (id === 0) return newCustomerDefault;
+    return customerQueryDao(id);
+  },
+});

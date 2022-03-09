@@ -16,14 +16,14 @@ import { deleteCustomerCateg } from './data/customerCategDao';
 import CustomerCategEdit from './CustomerCategEdit';
 
 let editmodeText = '';
-let editContext = 'self';
+let editContext = 'CustCategGrid';
 
-export default function CustCategFamGrid() {
+export default function CustCategGrid() {
 
     const customerCategs = useRecoilValue(custCategsQuery) as CustomerCategoryType[];
     const refreshCustomerCategs = useRecoilRefresher_UNSTABLE(custCategsQuery);
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustCategIdState(editContext));
     let customerCategToOpen = useRecoilValue(custCategQuery(editContext));
     const setNewCustomerCateg = useSetRecoilState(newCustCategState);
@@ -129,13 +129,18 @@ export default function CustCategFamGrid() {
                     disableSelectionOnClick
                     onRowClick={(params, event, details) => {}}
                 />
-                {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete category (id = ${customerCategToOpen.id}) ?`} modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+                {showYesCancelDialog ? <YesCancelDialog
+                    questionToConfirm={`Delete category (id = ${customerCategToOpen.id}) ?`}
+                    modalState={showYesCancelDialog}
+                    setFromParrent={setShowYesCancelDialog}
+                    editContext={editContext}
+                /> : <></>}
                 {openEditModal ? <CustomerCategEdit
                     customerCateg={customerCategToOpen ? customerCategToOpen : newCustomerCateg}
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}
-                    editContext={editContext}
+                    outerEditContext={editContext}
                 /> : <></>}
 
             </div>

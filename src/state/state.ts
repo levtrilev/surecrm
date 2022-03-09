@@ -1,5 +1,6 @@
 import {
   atom,
+  atomFamily,
   selector,
 } from "recoil";
 
@@ -10,12 +11,28 @@ export const childModalState = atom({
   default: false,
 });
 
-export const yesCancelState = atom({
+export const yesCancelState = atomFamily({
   key: "yesCancelState",
   default: false,
 });
 
-export const showYesCancelDialogState = atom({
+export const showYesCancelDialogState = atomFamily({
+  key: "showYesCancelDialogState",
+  default: false,
+});
+
+export const isModifiedState = atomFamily({
+  key: "isModifiedState",
+  default: false,
+});
+
+// 'neutral'|'yes'|'no'|'cancel'
+export const yesNoCancelState = atomFamily({
+  key: "yesNoCancelState",
+  default: 'neutral',
+});
+
+export const showYesNoCancelDialogState = atomFamily({
   key: "showYesCancelDialogState",
   default: false,
 });

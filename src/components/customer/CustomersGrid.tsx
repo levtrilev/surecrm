@@ -17,17 +17,17 @@ import { currentCustCategIdState } from '../customerCategory/data/customerCategS
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 
 let editmodeText = '';
-const editContext = 'self';
+const editContext = 'CustomersGrid';
 
 export default function CustomersGrid() {
 
     const customers = useRecoilValue(customersFullQuery) as CustomerFullType[];
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
-    const currentCustomerId = useRecoilValue(currentCustomerIdState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
-    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
-    let customerToOpen = useRecoilValue(customerQuery);
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
+    const currentCustomerId = useRecoilValue(currentCustomerIdState(editContext));
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
+    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
+    let customerToOpen = useRecoilValue(customerQuery(editContext));
     const setNewCustomer = useSetRecoilState(newCustomerState);
     const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
@@ -55,7 +55,6 @@ export default function CustomersGrid() {
     const copyCustomerAction = (id: number) => {
         editmodeText = 'copy mode';
         const customer = customers.find(x => x.id === id) as CustomerFullType;
-        
         setNewCustomer({ ...(customer), 'id': 0 });
         setCurrentCustomerCategId(customer.category_id);
         setOpenEditModal(true);
@@ -163,12 +162,13 @@ export default function CustomersGrid() {
                 onRowClick={(params, event, details) => openDocument(params, event, details)}
             />
             {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${customerToOpen.id}) ?`}
-                modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+                modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext}/> : <></>}
             {openEditModal ? <CustomerEdit
                 customer={customerToOpen ? customerToOpen : newCustomer}
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={editmodeText}
+                outerEditContext={editContext}
             /> : <></>}
 
         </div>

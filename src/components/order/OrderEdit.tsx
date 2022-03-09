@@ -5,54 +5,91 @@ import { postNewOrder, putUpdatedOrder } from './data/orderDao';
 import { currentCustomerIdState, openCustomerSelectorState } from '../customer/data/customerState';
 import { useEffect } from 'react';
 import { OrderEditForm } from './OrderEditForm';
-import { CustomerSelector } from '../customer/CustomerSelector';
+import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
+import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 
 interface Props {
     modalState: boolean;
     setFromParrent: SetOpenModal;
     order: OrderType;
     editmodeText: string;
+    outerEditContext: string;
 }
 
-export const OrderEdit: React.FC<Props> = ({ order, modalState, setFromParrent, editmodeText }) => {
-    const [newOrder, setNewOrder] = useRecoilState(newOrderState);
+export const OrderEdit: React.FC<Props> = ({ order, modalState,
+    setFromParrent, editmodeText, outerEditContext }) => {
+    const localEditContext = 'Order.' + order.id;
+
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
-    const setOpenCustomerSelector = useSetRecoilState(openCustomerSelectorState);
-    const currentCustomerId = useRecoilValue(currentCustomerIdState);
-    const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery);
+    const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery(outerEditContext));
+
+    const [newOrder, setNewOrder] = useRecoilState(newOrderState);
+    // const setOpenCustomerSelector = useSetRecoilState(openCustomerSelectorState);
+    const [currentCustomerId, setCurrentCustomerId] = useRecoilState(currentCustomerIdState(outerEditContext));
+
+    const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
+    const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
+    const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
 
     const handleClose = () => {
-        setFromParrent(false);
+        if (isModified) {
+            setShowYesNoCancelDialog(true);
+        } else {
+            setFromParrent(false);
+        }
     };
 
-    const updateOrder = (order: OrderType) => {
-        if (order.id === 0) {
-            postNewOrder(order);
+    const updateOrder = () => {
+        if (newOrder.id === 0) {
+            postNewOrder(newOrder);
         } else {
-            putUpdatedOrder(order);
+            putUpdatedOrder(newOrder);
         }
+        setIsModified(false);
         setTimeout(refreshOrders, 300);
         setTimeout(refreshOrder, 300);
     };
 
     useEffect(() => {
+        if (currentCustomerId === 0) {
+            setCurrentCustomerId(order.customer_id);
+        }
         setNewOrder({ ...newOrder, 'customer_id': currentCustomerId });
-        // console.log('useEffect fired!');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        setIsModified(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerId]);
+
+    useEffect(() => {
+        if (yesNoCancel === 'yes') {
+            updateOrder();
+            setYesNoCancel('neutral');
+            setFromParrent(false);
+        } else if (yesNoCancel === 'no') {
+            setYesNoCancel('neutral');
+            setFromParrent(false);
+        } else {
+            setYesNoCancel('neutral');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [yesNoCancel]);
 
     return (
         <div>
-        <OrderEditForm
-            order={order}
-            updateOrder={updateOrder}
-            setOpenCustomerSelector={setOpenCustomerSelector}
-            CustomerSelector={CustomerSelector}
-            handleClose={handleClose}
-            modalState={modalState}
-            editmodeText={editmodeText}
-        />
-    </div>
+            <OrderEditForm
+                order={order}
+                updateOrder={updateOrder}
+                handleClose={handleClose}
+                modalState={modalState}
+                editmodeText={editmodeText}
+                editContext={outerEditContext}
+            />
+            {showYesNoCancelDialog ? <YesNoCancelDialog
+                questionToConfirm={`Save changes (id = ${order.id}) ?`}
+                modalState={showYesNoCancelDialog}
+                setFromParrent={setShowYesNoCancelDialog}
+                editContext={localEditContext}
+            /> : <></>}
+        </div>
     );
 }
 

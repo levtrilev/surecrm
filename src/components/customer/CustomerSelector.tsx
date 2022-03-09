@@ -8,8 +8,11 @@ import CustomerEdit from './CustomerEdit';
 
 let editmodeText = '';
 
-export function CustomerSelector() {
-    const dialogHeading = 'Select a Customer';
+interface Props {
+    editContext: string;
+}
+    export const CustomerSelector: React.FC<Props> = ({editContext}) => {
+        const dialogHeading = 'Select a Customer';
     const [openCustomerSelector, setOpenCustomerSelector] = useRecoilState(openCustomerSelectorState);
     const items = useRecoilValue(customersQuery) as CustomerType[];
     const openSelector = openCustomerSelector;
@@ -17,10 +20,10 @@ export function CustomerSelector() {
     const closeSelector = () => setOpenCustomerSelector(false);
 
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
-    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
-    const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState('self'));
+    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
+    const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const [openEditModalCustomer, setOpenEditModalCustomer] = useRecoilState(openEditModalCustomerState);
-    let customerToOpen = useRecoilValue(customerQuery);
+    let customerToOpen = useRecoilValue(customerQuery(editContext));
 
     // This is copy_paste from CustomersGrid 
     // (except using of names: items, setOpenEditModalCustomer), sorry
@@ -65,6 +68,7 @@ export function CustomerSelector() {
                 modalState={openEditModalCustomer}
                 setFromParrent={setOpenEditModalCustomer}
                 editmodeText={editmodeText}
+                outerEditContext={editContext}
             /> : <></>}
         </>
     );

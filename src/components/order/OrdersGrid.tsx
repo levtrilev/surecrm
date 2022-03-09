@@ -16,18 +16,19 @@ import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 import { currentCustomerIdState } from '../customer/data/customerState';
 
 let editmodeText = '';
+let editContext = 'OrdersGrid';
 
 export default function OrdersGrid() {
 
     const orders = useRecoilValue(ordersFullQuery) as OrderFullType[];
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
-    const currentOrderId = useRecoilValue(currentOrderIdState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
-    const setCurrentOrderId = useSetRecoilState(currentOrderIdState);
-    let orderToOpen = useRecoilValue(orderQuery);
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
+    const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
+    const setCurrentOrderId = useSetRecoilState(currentOrderIdState(editContext));
+    let orderToOpen = useRecoilValue(orderQuery(editContext));
     const setNewOrder = useSetRecoilState(newOrderState);
-    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState);
+    const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
 
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
     const newOrder = useRecoilValue(newOrderState);
@@ -164,12 +165,13 @@ export default function OrdersGrid() {
                 onRowClick={(params, event, details) => openDocument(params, event, details)}
             />
             {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${orderToOpen.id}) ?`}
-                modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+                modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext}/> : <></>}
             {openEditModal ? <OrderEdit
                 order={orderToOpen ? orderToOpen : newOrder}
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={editmodeText}
+                outerEditContext={editContext}
             /> : <></>}
 
         </div>

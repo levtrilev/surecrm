@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { putUpdatedProdCateg, postNewProdCateg } from './data/prodCategDao';
-import { useRecoilRefresher_UNSTABLE } from 'recoil';
-import { prodCategQuery, prodCategsQuery } from './data/prodCategState'
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
+import { newProdCategState, prodCategQuery, prodCategsQuery } from './data/prodCategState'
 import { ProdCategEditForm } from './ProdCategEditForm';
+import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
+import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
+import { useEffect } from 'react';
 
 interface Props {
     modalState: boolean;
@@ -13,23 +16,49 @@ interface Props {
 }
 
 export const ProdCategEdit: React.FC<Props> = ({ prodCateg, modalState, setFromParrent, editmodeText, editContext }) => {
+    const localEditContext = 'ProdCateg.' + prodCateg.id
+
     const refreshProdCategs = useRecoilRefresher_UNSTABLE(prodCategsQuery);
     const refreshProdCateg = useRecoilRefresher_UNSTABLE(prodCategQuery(editContext));
-    
+
+    const newProdCateg = useRecoilValue(newProdCategState);
+
+    const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
+    const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
+    const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
+
     const handleClose = () => {
-        setFromParrent(false);
+        if (isModified) {
+            setShowYesNoCancelDialog(true);
+        }
+        // setFromParrent(false);
     };
 
-    const updateProdCateg = (prodCateg: ProductCategoryType) => {
-        if (prodCateg.id === 0) {
-            postNewProdCateg(prodCateg);
+    const updateProdCateg = () => {
+        if (newProdCateg.id === 0) {
+            postNewProdCateg(newProdCateg);
         } else {
-            putUpdatedProdCateg(prodCateg);
+            putUpdatedProdCateg(newProdCateg);
         }
+        setIsModified(false);
         setTimeout(refreshProdCategs, 300);
         setTimeout(refreshProdCateg, 300);
     };
-    
+
+    useEffect(() => {
+        if (yesNoCancel === 'yes') {
+            updateProdCateg();
+            setYesNoCancel('neutral');
+            setFromParrent(false);
+        } else if (yesNoCancel === 'no') {
+            setYesNoCancel('neutral');
+            setFromParrent(false);
+        } else {
+            setYesNoCancel('neutral');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [yesNoCancel]);
+
     return (
         <div>
             <ProdCategEditForm
@@ -38,7 +67,14 @@ export const ProdCategEdit: React.FC<Props> = ({ prodCateg, modalState, setFromP
                 editmodeText={editmodeText}
                 handleClose={handleClose}
                 modalState={modalState}
+                editContext={editContext}
             />
+            {showYesNoCancelDialog ? <YesNoCancelDialog
+                questionToConfirm={`Save changes (id = ${prodCateg.id}) ?`}
+                modalState={showYesNoCancelDialog}
+                setFromParrent={setShowYesNoCancelDialog}
+                editContext={localEditContext}
+            /> : <></>}
         </div>
     );
 }

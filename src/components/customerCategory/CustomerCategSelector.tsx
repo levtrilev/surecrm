@@ -17,10 +17,10 @@ export const CustCategSelector: React.FC<Props> = ({editContext}) => {
     const [openCustomerCategSelector, setOpenCustomerCategSelector] = useRecoilState(openCustCategSelectorState);
     const items = useRecoilValue(custCategsQuery) as ProductCategoryType[];
     const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
-    const setEditCustomerCategId = useSetRecoilState(currentCustCategIdState('self'));
+    const setEditCustomerCategId = useSetRecoilState(currentCustCategIdState('CustCategSelector'));
 
     const [openEditModalCustomerCateg, setOpenEditModalCustomerCateg] = useRecoilState(openEditModalCustCategState);
-    let customerCategToEdit = useRecoilValue(custCategQuery('self'));
+    let customerCategToEdit = useRecoilValue(custCategQuery('CustCategSelector'));
     const [newCustomerCateg, setNewCustomerCateg] = useRecoilState(newCustCategState);
 
 
@@ -64,7 +64,7 @@ export const CustCategSelector: React.FC<Props> = ({editContext}) => {
                 modalState={openEditModalCustomerCateg}
                 setFromParrent={setOpenEditModalCustomerCateg}
                 editmodeText={editmodeText}
-                editContext={editContext}
+                outerEditContext={editContext}
             /> : <></>}
         </>
     );

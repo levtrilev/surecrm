@@ -4,7 +4,7 @@ import {
     useRecoilValue,
     useRecoilRefresher_UNSTABLE,
 } from 'recoil';
-import { currentCustomerIdState, newCustomerState, customerQuery, customersQuery, customersFullQuery } from './data/customerState'
+import { currentCustomerIdState, customerQuery, customersQuery, customersFullQuery } from './data/customerState'
 import { Container, Grid } from '@mui/material';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state';
@@ -12,20 +12,17 @@ import { deleteCustomer } from './data/customerDao';
 import Customer from './Customer';
 import CustomerEdit from './CustomerEdit';
 
+let editContext = 'Customers';
+
 const Customers: React.FC = () => {
 
-    // const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
     const customers = useRecoilValue(customersFullQuery) as CustomerFullType[];
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersQuery);
-    const customerToOpen = useRecoilValue(customerQuery);
-    const currentCustomerId = useRecoilValue(currentCustomerIdState);
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
+    const customerToOpen = useRecoilValue(customerQuery(editContext));
+    const currentCustomerId = useRecoilValue(currentCustomerIdState(editContext));
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-
-    // const onNewCustomerNameChange = (event: any) => {
-    //     setNewCustomer({ ...newCustomer, 'name': event.target.value });
-    // };
 
     useEffect(() => {
         if (yesCancel) {
@@ -54,13 +51,15 @@ const Customers: React.FC = () => {
                 </Grid>
                 {customers.length ? customers.map(customer => <Customer key={customer.id} customer={customer} />) : <tr>"Нет записей"</tr>}
             </div>
-            {openEditModal ? <CustomerEdit 
-            customer={customerToOpen} 
-            modalState={openEditModal} 
-            setFromParrent={setOpenEditModal}
-            editmodeText='edit mode'
+            {openEditModal ? <CustomerEdit
+                customer={customerToOpen}
+                modalState={openEditModal}
+                setFromParrent={setOpenEditModal}
+                editmodeText='edit mode'
+                outerEditContext={editContext}
             /> : <></>}
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Customer (id = ${customerToOpen.id}) ?`} modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Customer (id = ${customerToOpen.id}) ?`}
+                modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
         </div>
     )
 }

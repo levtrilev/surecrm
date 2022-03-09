@@ -4,8 +4,9 @@ import Modal from '@mui/material/Modal';
 import { Grid, TextField, Typography } from '@mui/material';
 import { Item } from '../../shared/elements';
 import Button from '@mui/material/Button';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { newCustCategState } from './data/customerCategState';
+import { isModifiedState } from '../../state/state';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -23,22 +24,24 @@ const style = {
 
 interface Props {
     customerCateg: CustomerCategoryType;
-    updateCustomerCateg: (customerCateg: CustomerCategoryType) => void;
+    updateCustomerCateg: () => void;
     editmodeText: string;
     handleClose: () => void;
     modalState: boolean;
+    editContext: string; // in case for newCustCategState to be a Family
 }
 
 export const CustomerCategEditForm: React.FC<Props> = ({ customerCateg, updateCustomerCateg, editmodeText,
-    handleClose, modalState }) => {
+    handleClose, modalState, editContext }) => {
+    const localEditContext = 'CustomerCateg.' + customerCateg.id
+
     const [newCustomerCateg, setNewCustomerCateg] = useRecoilState(newCustCategState);
+    const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
 
     const onCustomerCategNameChange = (event: any) => {
         setNewCustomerCateg({ ...newCustomerCateg, 'name': event.target.value });
+        setIsModified(true);
     };
-    // const onCustomerCategBlockedToggle = (event: any) => {
-    //     setNewCustomerCateg({ ...newCustomerCateg, 'blocked': event.target.checked });
-    // };
 
     return (
         <React.Fragment>
@@ -87,7 +90,7 @@ export const CustomerCategEditForm: React.FC<Props> = ({ customerCateg, updateCu
 
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <Button onClick={() => updateCustomerCateg(newCustomerCateg)}>
+                                <Button onClick={updateCustomerCateg}>
                                     save
                                 </Button>
                             </Grid>

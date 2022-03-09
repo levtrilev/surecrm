@@ -11,20 +11,22 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
-import { currentProdCategIdState, prodCategQuery, prodCategsQuery, 
-    newProdCategDefault, newProdCategState } from './data/prodCategState';
+import {
+    currentProdCategIdState, prodCategQuery, prodCategsQuery,
+    newProdCategDefault, newProdCategState
+} from './data/prodCategState';
 import { deleteProdCateg } from './data/prodCategDao';
 import ProdCategEdit from './ProdCategEdit';
 
 let editmodeText = '';
-let editContext = 'self';
+let editContext = 'ProdCategGrid';
 
 export default function ProdCategGrid() {
 
     const prodCategs = useRecoilValue(prodCategsQuery) as ProductCategoryType[];
     const refreshProdCategs = useRecoilRefresher_UNSTABLE(prodCategsQuery);
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [currentProdCategId, setCurrentProdCategId] = useRecoilState(currentProdCategIdState(editContext));
     let prodCategToOpen = useRecoilValue(prodCategQuery(editContext));
     const setNewProdCateg = useSetRecoilState(newProdCategState);
@@ -102,7 +104,7 @@ export default function ProdCategGrid() {
             setTimeout(refreshProdCategs, 300);
             setYesCancel(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentProdCategId, yesCancel]);
 
     return (
@@ -123,9 +125,14 @@ export default function ProdCategGrid() {
                     rowsPerPageOptions={[16]}
                     checkboxSelection
                     disableSelectionOnClick
-                    onRowClick={(params, event, details) => {}}
+                    onRowClick={(params, event, details) => { }}
                 />
-                {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete category (id = ${prodCategToOpen.id}) ?`} modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+                {showYesCancelDialog ? <YesCancelDialog
+                    questionToConfirm={`Delete category (id = ${prodCategToOpen.id}) ?`}
+                    modalState={showYesCancelDialog}
+                    setFromParrent={setShowYesCancelDialog}
+                    editContext={editContext}
+                /> : <></>}
                 {openEditModal ? <ProdCategEdit
                     prodCateg={prodCategToOpen ? prodCategToOpen : newProdCateg}
                     modalState={openEditModal}

@@ -16,17 +16,17 @@ import { currentProdCategIdState } from '../productCategory/data/prodCategState'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 
 let editmodeText = '';
-const editContext = 'self';
+const editContext = 'ProductsGrid';
 
 export default function ProductsGrid() {
 
     const products = useRecoilValue(productsFullQuery) as ProductFullType[];
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
-    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState);
-    const currentProductId = useRecoilValue(currentProductIdState);
-    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState);
-    const setCurrentProductId = useSetRecoilState(currentProductIdState);
-    let productToOpen = useRecoilValue(productQuery);
+    const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
+    const currentProductId = useRecoilValue(currentProductIdState(editContext));
+    const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
+    const setCurrentProductId = useSetRecoilState(currentProductIdState(editContext));
+    let productToOpen = useRecoilValue(productQuery(editContext));
     const setNewProduct = useSetRecoilState(newProductState);
     const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
@@ -150,7 +150,7 @@ export default function ProductsGrid() {
             setTimeout(refreshProducts, 300);
             setYesCancel(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentProductId, yesCancel]);
 
     return (
@@ -173,13 +173,15 @@ export default function ProductsGrid() {
                     disableSelectionOnClick
                     onRowClick={(params, event, details) => openDocument(params, event, details)}
                 />
-                {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${productToOpen.id}) ?`} modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} /> : <></>}
+                {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${productToOpen.id}) ?`}
+                    modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
                 {openEditModal ? <ProductEdit
                     product={productToOpen ? productToOpen : newProduct}
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}
-                /> : <></>}
+                    outerEditContext={editContext}
+                    /> : <></>}
             </div>
         </>
     );

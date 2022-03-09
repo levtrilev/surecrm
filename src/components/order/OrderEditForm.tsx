@@ -5,8 +5,10 @@ import { Grid, TextField, Typography } from '@mui/material';
 import { Item } from '../../shared/elements';
 import Button from '@mui/material/Button';
 import { newOrderState } from './data/orderState';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { customerQuery } from '../customer/data/customerState';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { customerQuery, openCustomerSelectorState } from '../customer/data/customerState';
+import { CustomerSelector } from '../customer/CustomerSelector';
+import { isModifiedState } from '../../state/state';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -24,27 +26,28 @@ const style = {
 
 interface Props {
     order: OrderType;
-    setOpenCustomerSelector: (selectorState: boolean) => void;
-    updateOrder: (order: OrderType) => void;
+    updateOrder: () => void;
     handleClose: () => void;
-    CustomerSelector: React.FC;
     modalState: boolean;
     editmodeText: string;
+    editContext: string;
 }
 
 export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
-    setOpenCustomerSelector, CustomerSelector, handleClose,
-    modalState, editmodeText }) => {
+    handleClose, modalState, editmodeText, editContext }) => {
+    const localEditContext = 'Order.' + order.id
 
-    const currentCustomer = useRecoilValue(customerQuery);
-    const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery);
+    const currentCustomer = useRecoilValue(customerQuery(editContext));
+    const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery(editContext));
+
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
+    const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
+    const [openCustomerSelector, setOpenCustomerSelector] = useRecoilState(openCustomerSelectorState);
+
     const onOrderNumberChange = (event: any) => {
         setNewOrder({ ...newOrder, 'number': event.target.value, 'name': event.target.value });
+        setIsModified(true);
     };
-    // const onOrderBlockedToggle = (event: any) => {
-    //     setNewOrder({ ...newOrder, 'blocked': event.target.checked });
-    // };
 
     return (
         <React.Fragment>
@@ -75,19 +78,19 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
                                 <TextField id="order-number" label="Order number" onChange={onOrderNumberChange} value={newOrder.number} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="order-customer-id" label="Customer ID (select)" 
-                                onClick={() => {setOpenCustomerSelector(true); refreshCustomer();}} 
-                                value={newOrder.customer_id} />
+                                <TextField id="order-customer-id" label="Customer ID (select)"
+                                    onClick={() => { setOpenCustomerSelector(true); refreshCustomer(); }}
+                                    value={newOrder.customer_id} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="customer" label="Customer" 
-                                onClick={() => {setOpenCustomerSelector(true); refreshCustomer();}} 
-                                value={currentCustomer.name} />
+                                <TextField id="customer" label="Customer"
+                                    onClick={() => { setOpenCustomerSelector(true); refreshCustomer(); }}
+                                    value={currentCustomer.name} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <Button onClick={() => updateOrder(newOrder)}>
+                                <Button onClick={updateOrder}>
                                     save
                                 </Button>
                             </Grid>
@@ -103,7 +106,7 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
                             </Grid>
                         </Grid>
                     </Grid>
-                    <CustomerSelector />
+                    {openCustomerSelector ? <CustomerSelector editContext={editContext} /> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>
