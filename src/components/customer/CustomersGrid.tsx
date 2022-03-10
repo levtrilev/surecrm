@@ -48,6 +48,7 @@ export default function CustomersGrid() {
             editmodeText = 'edit mode';
             setCurrentCustomerId(id);
             const customer = customers.find(x => x.id === id) as CustomerFullType;
+            setCurrentCustomerCategId(customer.category_id);
             setNewCustomer(fullCustomerToCustomer(customer));
         }
         setOpenEditModal(true);
@@ -85,7 +86,7 @@ export default function CustomersGrid() {
             setTimeout(refreshCustomers, 300);
             setYesCancel(false);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerId, yesCancel]);
 
     function getCategory(params: any) {
@@ -162,7 +163,7 @@ export default function CustomersGrid() {
                 onRowClick={(params, event, details) => openDocument(params, event, details)}
             />
             {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${customerToOpen.id}) ?`}
-                modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext}/> : <></>}
+                modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
             {openEditModal ? <CustomerEdit
                 customer={customerToOpen ? customerToOpen : newCustomer}
                 modalState={openEditModal}

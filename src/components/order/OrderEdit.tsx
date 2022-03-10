@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { newOrderState, orderQuery, ordersFullQuery } from './data/orderState';
 import { postNewOrder, putUpdatedOrder } from './data/orderDao';
-import { currentCustomerIdState, openCustomerSelectorState } from '../customer/data/customerState';
-import { useEffect } from 'react';
+import { currentCustomerIdState } from '../customer/data/customerState';
+import { useEffect, useRef } from 'react';
 import { OrderEditForm } from './OrderEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
@@ -19,13 +19,14 @@ interface Props {
 export const OrderEdit: React.FC<Props> = ({ order, modalState,
     setFromParrent, editmodeText, outerEditContext }) => {
     const localEditContext = 'Order.' + order.id;
+    const isInitialMount = useRef(true);
 
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
     const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery(outerEditContext));
 
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
     // const setOpenCustomerSelector = useSetRecoilState(openCustomerSelectorState);
-    const [currentCustomerId, setCurrentCustomerId] = useRecoilState(currentCustomerIdState(outerEditContext));
+    const currentCustomerId = useRecoilValue(currentCustomerIdState(outerEditContext));
 
     const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
@@ -51,11 +52,12 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
     };
 
     useEffect(() => {
-        if (currentCustomerId === 0) {
-            setCurrentCustomerId(order.customer_id);
-        }
-        setNewOrder({ ...newOrder, 'customer_id': currentCustomerId });
-        setIsModified(true);
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+         } else {
+            setNewOrder({ ...newOrder, 'customer_id': currentCustomerId });
+            setIsModified(true);
+         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerId]);
 

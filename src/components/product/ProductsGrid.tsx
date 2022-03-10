@@ -48,6 +48,7 @@ export default function ProductsGrid() {
             setCurrentProductId(id);
             const product = products.find(x => x.id === id) as ProductFullType;
             setNewProduct(fullProductToProduct(product));
+            setCurrentProdCategId(product.category_id);
         }
         setOpenEditModal(true);
     };

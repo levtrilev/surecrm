@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { postNewCustomer, putUpdatedCustomer } from './data/customerDao';
-import { useRecoilRefresher_UNSTABLE, useRecoilState } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { newCustomerState, customersFullQuery, customerQuery } from './data/customerState'
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { CustomerEditForm } from './CustomerEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
@@ -19,12 +19,13 @@ interface Props {
 export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
     setFromParrent, editmodeText, outerEditContext }) => {
     const localEditContext = 'Customer.' + customer.id;
-
+    const isInitialMount = useRef(true);
+    
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
     const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery(outerEditContext));
 
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
-    const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustCategIdState(outerEditContext));
+    const currentCustomerCategId = useRecoilValue(currentCustCategIdState(outerEditContext));
 
     const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
@@ -50,25 +51,24 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
     };
 
     useEffect(() => {
-        if (currentCustomerCategId === 0) {
-            setCurrentCustomerCategId(customer.category_id);
-        }
-        setNewCustomer({ ...newCustomer, 'category_id': currentCustomerCategId });
-        setIsModified(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+         } else {
+            setNewCustomer({ ...newCustomer, 'category_id': currentCustomerCategId });
+            setIsModified(true);
+         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerCategId]);
 
     useEffect(() => {
         if (yesNoCancel === 'yes') {
             updateCustomer();
-            setYesNoCancel('neutral');
             setFromParrent(false);
         } else if (yesNoCancel === 'no') {
-            setYesNoCancel('neutral');
             setFromParrent(false);
-        } else {
-            setYesNoCancel('neutral');
         }
+        setYesNoCancel('neutral');
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [yesNoCancel]);
 
