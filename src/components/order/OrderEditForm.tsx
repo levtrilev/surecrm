@@ -106,7 +106,7 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
                             </Grid>
                         </Grid>
                     </Grid>
-                    {openCustomerSelector ? <CustomerSelector editContext={editContext} /> : <></>}
+                    {openCustomerSelector ? <CustomerSelector editContext={editContext} enableDruggableParent={()=>{}}/> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>

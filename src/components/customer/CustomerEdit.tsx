@@ -4,9 +4,10 @@ import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'rec
 import { newCustomerState, customersFullQuery, customerQuery } from './data/customerState'
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import { useEffect, useRef } from 'react';
-import { CustomerEditForm } from './CustomerEditForm';
+// import { CustomerEditForm } from './CustomerEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
+import { CustomerFormDialog } from './CustomerFormDialog';
 
 interface Props {
     modalState: boolean;
@@ -68,13 +69,12 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
             setFromParrent(false);
         }
         setYesNoCancel('neutral');
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [yesNoCancel]);
 
     return (
         <div>
-            <CustomerEditForm
+            <CustomerFormDialog
                 customer={customer}
                 updateCustomer={updateCustomer}
                 handleClose={handleClose}

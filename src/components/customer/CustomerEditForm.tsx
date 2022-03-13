@@ -112,7 +112,7 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
                             </Grid>
                         </Grid>
                     </Grid>
-                    {openCustomerCategSelector ? <CustCategSelector editContext={editContext} /> : <></>}
+                    {openCustomerCategSelector ? <CustCategSelector editContext={editContext} enableDruggableParent={()=>{}}/> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>

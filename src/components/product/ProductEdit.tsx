@@ -4,9 +4,9 @@ import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'rec
 import { newProductState, productQuery, productsFullQuery } from './data/productState'
 import { currentProdCategIdState } from '../productCategory/data/prodCategState';
 import { useEffect, useRef } from 'react';
-import { ProductEditForm } from './ProductEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
+import { ProductFormDialog } from './ProductFormDialog';
 
 interface Props {
     modalState: boolean;
@@ -73,7 +73,7 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState,
 
     return (
         <div>
-            <ProductEditForm
+            <ProductFormDialog
                 product={product}
                 updateProduct={updateProduct}
                 editmodeText={editmodeText}

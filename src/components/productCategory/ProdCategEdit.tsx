@@ -2,10 +2,11 @@ import * as React from 'react';
 import { putUpdatedProdCateg, postNewProdCateg } from './data/prodCategDao';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { newProdCategState, prodCategQuery, prodCategsQuery } from './data/prodCategState'
-import { ProdCategEditForm } from './ProdCategEditForm';
+// import { ProdCategEditForm } from './ProdCategEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { useEffect } from 'react';
+import ProdCategFormDialog from './ProdCategFormDialog';
 
 interface Props {
     modalState: boolean;
@@ -59,7 +60,7 @@ export const ProdCategEdit: React.FC<Props> = ({ prodCateg, modalState, setFromP
 
     return (
         <div>
-            <ProdCategEditForm
+            <ProdCategFormDialog
                 prodCateg={prodCateg}
                 updateProdCateg={updateProdCateg}
                 editmodeText={editmodeText}

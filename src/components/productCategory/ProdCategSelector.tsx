@@ -9,8 +9,9 @@ let editmodeText = '';
 
 interface Props {
     editContext: string;
+    enableDruggableParent: () => void;
 }
-    export const ProdCategSelector: React.FC<Props> = ({editContext}) => {
+    export const ProdCategSelector: React.FC<Props> = ({editContext, enableDruggableParent}) => {
     const dialogHeading = 'Select a Product Category';
     const [openProdCategSelector, setOpenProdCategSelector] = useRecoilState(openProdCategSelectorState);
     const items = useRecoilValue(prodCategsQuery) as ProductCategoryType[];
@@ -22,7 +23,10 @@ interface Props {
     const [newProdCateg, setNewProdCateg] = useRecoilState(newProdCategState);
 
     const openSelector = openProdCategSelector;
-    const closeSelector = () => setOpenProdCategSelector(false);
+    const closeSelector = () => {
+        setOpenProdCategSelector(false);
+        enableDruggableParent();
+    }
 
     const takeItem = (id: number) => {
         setCurrentProdCategId(id);

@@ -6,6 +6,7 @@ import { CustomerCategEditForm } from './CustomerCategEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { useEffect } from 'react';
+import { CustomerCategFormDialog } from './CustomerCategFormDialog';
 
 interface Props {
     modalState: boolean;
@@ -60,10 +61,9 @@ export const CustomerCategEdit: React.FC<Props> = ({ customerCateg, modalState,
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [yesNoCancel]);
-
     return (
         <div>
-            <CustomerCategEditForm
+            <CustomerCategFormDialog
                 customerCateg={customerCateg}
                 updateCustomerCateg={updateCustomerCateg}
                 handleClose={handleClose}

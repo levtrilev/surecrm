@@ -10,14 +10,18 @@ let editmodeText = '';
 
 interface Props {
     editContext: string;
+    enableDruggableParent: () => void;
 }
-    export const CustomerSelector: React.FC<Props> = ({editContext}) => {
+    export const CustomerSelector: React.FC<Props> = ({editContext, enableDruggableParent}) => {
         const dialogHeading = 'Select a Customer';
     const [openCustomerSelector, setOpenCustomerSelector] = useRecoilState(openCustomerSelectorState);
     const items = useRecoilValue(customersQuery) as CustomerType[];
     const openSelector = openCustomerSelector;
 
-    const closeSelector = () => setOpenCustomerSelector(false);
+    const closeSelector = () => {
+        setOpenCustomerSelector(false);
+        enableDruggableParent();
+    }
 
     const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));

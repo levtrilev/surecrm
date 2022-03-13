@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import { OrderEditForm } from './OrderEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
+import { OrderFormDialog } from './OrderFormDialog';
 
 interface Props {
     modalState: boolean;
@@ -77,7 +78,7 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
 
     return (
         <div>
-            <OrderEditForm
+            <OrderFormDialog
                 order={order}
                 updateOrder={updateOrder}
                 handleClose={handleClose}
