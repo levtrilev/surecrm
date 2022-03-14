@@ -4,7 +4,6 @@ import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'rec
 import { newCustomerState, customersFullQuery, customerQuery } from './data/customerState'
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import { useEffect, useRef } from 'react';
-// import { CustomerEditForm } from './CustomerEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { CustomerFormDialog } from './CustomerFormDialog';

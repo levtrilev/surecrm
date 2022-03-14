@@ -1,7 +1,6 @@
 import { atom, atomFamily, selector, selectorFamily } from "recoil";
 import { sectionId, tenantId } from "../../../shared/appConsts";
 import {
-  // customerFullQueryDao,
   customerQueryDao,
   customersFullQueryDao,
   customersQueryDao,

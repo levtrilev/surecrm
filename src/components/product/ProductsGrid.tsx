@@ -55,7 +55,7 @@ export default function ProductsGrid() {
     const copyProductAction = (id: number) => {
         editmodeText = 'copy mode';
         const product = products.find(x => x.id === id) as ProductFullType;
-        setNewProduct({ ...(product), 'id': 0 });
+        setNewProduct({ ...(fullProductToProduct(product)), 'id': 0 });
         setCurrentProdCategId(product.category_id);
         setOpenEditModal(true);
     };

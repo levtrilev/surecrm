@@ -56,7 +56,7 @@ export default function CustomersGrid() {
     const copyCustomerAction = (id: number) => {
         editmodeText = 'copy mode';
         const customer = customers.find(x => x.id === id) as CustomerFullType;
-        setNewCustomer({ ...(customer), 'id': 0 });
+        setNewCustomer({ ...(fullCustomerToCustomer(customer)), 'id': 0 });
         setCurrentCustomerCategId(customer.category_id);
         setOpenEditModal(true);
     };

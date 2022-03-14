@@ -7,7 +7,7 @@ export const newOrderDefault: OrderType = {
   number: "",
   name: "",
   date: new Date("2022-01-01"),
-  customer_id: 1,
+  customer_id: 0,
   total_amount: 0,
   deleted: false,
   section_id: tenantId,

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { newOrderState, orderQuery, ordersFullQuery } from './data/orderState';
 import { postNewOrder, putUpdatedOrder } from './data/orderDao';
 import { currentCustomerIdState } from '../customer/data/customerState';
 import { useEffect, useRef } from 'react';
-import { OrderEditForm } from './OrderEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { OrderFormDialog } from './OrderFormDialog';
@@ -26,7 +25,6 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
     const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery(outerEditContext));
 
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
-    // const setOpenCustomerSelector = useSetRecoilState(openCustomerSelectorState);
     const currentCustomerId = useRecoilValue(currentCustomerIdState(outerEditContext));
 
     const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
@@ -65,14 +63,11 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
     useEffect(() => {
         if (yesNoCancel === 'yes') {
             updateOrder();
-            setYesNoCancel('neutral');
             setFromParrent(false);
         } else if (yesNoCancel === 'no') {
-            setYesNoCancel('neutral');
             setFromParrent(false);
-        } else {
-            setYesNoCancel('neutral');
         }
+            setYesNoCancel('neutral');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [yesNoCancel]);
 
