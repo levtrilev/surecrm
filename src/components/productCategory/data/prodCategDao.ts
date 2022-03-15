@@ -1,4 +1,5 @@
 import { DOMAIN, TOKEN } from "../../../shared/appConsts";
+const ENDPOINT = 'view_product_categories';
 
 export async function postNewProdCateg(newProdCateg: ProductCategoryType) {
     let { id, ...prodCateg } = newProdCateg;
@@ -7,7 +8,7 @@ export async function postNewProdCateg(newProdCateg: ProductCategoryType) {
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
         body: JSON.stringify([{ ...prodCateg }])
     };
-    const response = await fetch(`${DOMAIN}/product_categories`, requestOptions);
+    const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
     console.log(response.status);
 }
 
@@ -18,7 +19,7 @@ export async function putUpdatedProdCateg(prodCateg: ProductCategoryType) {
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
         body: JSON.stringify([{ ...prodCateg }])
     };
-    const response = await fetch(`${DOMAIN}/product_categories?id=eq.${prodCateg.id}`, requestOptions);
+    const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${prodCateg.id}`, requestOptions);
     console.log(response.status);
 }
 
@@ -27,13 +28,17 @@ export async function deleteProdCateg(id: number) {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
     };
-    const response = await fetch(`${DOMAIN}/product_categories?id=eq.${id}`, requestOptions);
+    const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions);
     console.log(response.status, response.url);
 }
 
 export const prodCategsQueryDao = async () => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+  };
     const response = await fetch(
-        `${DOMAIN}/product_categories`
+        `${DOMAIN}/${ENDPOINT}`, requestOptions
       );
       const categories = await response.json();
       if (response.status !== 200) {
@@ -43,8 +48,12 @@ export const prodCategsQueryDao = async () => {
 };
 
 export const prodCategQueryDao = async (id: number) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+  };
     const response = await fetch(
-        `${DOMAIN}/product_categories?id=eq.${id}`
+        `${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions
       );
       const prod_category = await response.json();
       if (response.status !== 200) {

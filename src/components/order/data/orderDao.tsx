@@ -1,4 +1,5 @@
 import { DOMAIN, TOKEN } from "../../../shared/appConsts";
+const ENDPOINT = 'view_orders';
 
 export async function postNewOrder(newOrder: OrderType) {
     let { id, date, ...order } = newOrder; // look at https://stackoverflow.com/questions/34698905/how-can-i-clone-a-javascript-object-except-for-one-key
@@ -9,7 +10,7 @@ export async function postNewOrder(newOrder: OrderType) {
         body: JSON.stringify([{ ...order }])
     };
     // console.log(requestOptions);
-    const response = await fetch(`${DOMAIN}/orders`, requestOptions);
+    const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
     console.log(response.status);
 }
 
@@ -20,7 +21,7 @@ export async function putUpdatedOrder(order: OrderType) {
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
         body: JSON.stringify([{ ...order }])
     };
-    const response = await fetch(`${DOMAIN}/orders?id=eq.${order.id}`, requestOptions);
+    const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${order.id}`, requestOptions);
     console.log(response.status);
 }
 
@@ -29,13 +30,17 @@ export async function deleteOrder(id: number) {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
     };
-    const response = await fetch(`${DOMAIN}/orders?id=eq.${id}`, requestOptions);
+    const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions);
     console.log(response.status, response.url);
 }
 
 export const ordersQueryDao = async () => {
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    };
     const response = await fetch(
-        `${DOMAIN}/orders`
+        `${DOMAIN}/orders`, requestOptions
     );
     const orders = await response.json();
     if (response.status !== 200) {
@@ -45,8 +50,12 @@ export const ordersQueryDao = async () => {
 };
 
 export const orderQueryDao = async (id: number) => {
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    };
     const response = await fetch(
-        `${DOMAIN}/orders?id=eq.${id}`
+        `${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions
     );
     const order = await response.json();
     if (response.status !== 200) {
@@ -61,24 +70,14 @@ export const orderQueryDao = async (id: number) => {
 }
 
 export const ordersFullQueryDao = async () => {
-    const response = await fetch(`${DOMAIN}/orders?select=*,customers(id,name)`);
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    };
+    const response = await fetch(`${DOMAIN}/${ENDPOINT}?select=*,customers:view_customers(id,name)`, requestOptions);
     const orders = await response.json();
     if (response.status !== 200) {
         console.log(`Bad HTTP request status ${response.status}`);
     }
     return orders;
 };
-
-// export const orderFullQueryDao = async (id: number) => {
-//     const response = await fetch(`${DOMAIN}/select=*,customers(id,name)&id=eq.${id}`);
-//     const order = await response.json();
-//     if (response.status !== 200) {
-//         console.log(`Bad HTTP request status ${response.status}`);
-//     }
-//     if (order.length === 1) {
-//         return order[0];
-//     } else {
-//         console.log("if (order.length === 1)", "false");
-//         return null;
-//     }
-// };

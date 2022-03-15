@@ -1,67 +1,45 @@
 import { DOMAIN, TOKEN } from "../../../shared/appConsts";
+const ENDPOINT = 'view_customers';
 
 export async function postNewCustomer(newCustomer: CustomerType) {
-    let { id, ...customer } = newCustomer; // look at https://stackoverflow.com/questions/34698905/how-can-i-clone-a-javascript-object-except-for-one-key
+  let { id, ...customer } = newCustomer; // look at https://stackoverflow.com/questions/34698905/how-can-i-clone-a-javascript-object-except-for-one-key
 
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
-        body: JSON.stringify([{ ...customer }])
-    };
-    // console.log(requestOptions);
-    const response = await fetch(`${DOMAIN}/customers`, requestOptions);
-    console.log(response.status);
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    body: JSON.stringify([{ ...customer }])
+  };
+  // console.log(requestOptions);
+  const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
+  console.log(response.status);
 }
 
 export async function deleteCustomer(id: number) {
-    const requestOptions = {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
-    };
-    const response = await fetch(`${DOMAIN}/customers?id=eq.${id}`, requestOptions);
-    console.log(response.status, response.url);
+  const requestOptions = {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+  };
+  const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions);
+  console.log(response.status, response.url);
 }
 
 export async function putUpdatedCustomer(customer: CustomerType) {
 
-    const requestOptions = {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
-        body: JSON.stringify([{ ...customer }])
-    };
-    const response = await fetch(`${DOMAIN}/customers?id=eq.${customer.id}`, requestOptions);
-    console.log(response.status);
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    body: JSON.stringify([{ ...customer }])
+  };
+  const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${customer.id}`, requestOptions);
+  console.log(response.status);
 }
 
 export const customersQueryDao = async () => {
-    const response = await fetch(
-        `${DOMAIN}/customers`
-      );
-      const customers = await response.json();
-      if (response.status !== 200) {
-        console.log(`Bad HTTP request status ${response.status}`);
-      }
-      return customers;
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
   };
-
-export const customerQueryDao = async (id: number) => {
-    const response = await fetch(
-        `${DOMAIN}/customers?id=eq.${id}`
-      );
-      const customer = await response.json();
-      if (response.status !== 200) {
-        console.log(`Bad HTTP request status ${response.status}`);
-      }
-      if (customer.length === 1) {
-        return customer[0];
-      } else {
-        console.log('if (customer.length === 1)', 'false');
-        return null;
-      }
-};
-
-export const customersFullQueryDao = async () => {
-  const response = await fetch(`${DOMAIN}/customers?select=*,customer_categories(id,name)`);
+  const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
   const customers = await response.json();
   if (response.status !== 200) {
     console.log(`Bad HTTP request status ${response.status}`);
@@ -69,16 +47,36 @@ export const customersFullQueryDao = async () => {
   return customers;
 };
 
-// export const customerFullQueryDao = async (id: number) => {
-//   const response = await fetch(`${DOMAIN}/select=*,customer_categories(id,name)&id=eq.${id}`);
-//   const customer = await response.json();
-//   if (response.status !== 200) {
-//     console.log(`Bad HTTP request status ${response.status}`);
-//   }
-//   if (customer.length === 1) {
-//     return customer[0];
-//   } else {
-//     console.log("if (customer.length === 1)", "false");
-//     return null;
-//   }
-// };
+export const customerQueryDao = async (id: number) => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+  };
+  const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions);
+  const customer = await response.json();
+  if (response.status !== 200) {
+    console.log(`Bad HTTP request status ${response.status}`);
+  }
+  if (customer.length === 1) {
+    return customer[0];
+  } else {
+    console.log('if (customer.length === 1)', 'false');
+    return null;
+  }
+};
+
+export const customersFullQueryDao = async () => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+  };
+  const response = await fetch(
+    `${DOMAIN}/${ENDPOINT}?select=*,customer_categories:view_customer_categories(id,name)`,
+    requestOptions
+  );
+  const customers = await response.json();
+  if (response.status !== 200) {
+    console.log(`Bad HTTP request status ${response.status}`);
+  }
+  return customers;
+};

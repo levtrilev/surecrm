@@ -17,6 +17,7 @@ import CustomersGrid from "./components/customer/CustomersGrid";
 import OrdersGrid from "./components/order/OrdersGrid";
 import ProdCategGrid from "./components/productCategory/ProdCategGrid";
 import CustCategFamGrid from "./components/customerCategory/CustomerCategGrid";
+import SignIn from "./components/auth/SignIn";
 
 function App() {
   const drawerWidth = 240;
@@ -51,6 +52,7 @@ function App() {
                 <Route path="/customers" element={<CustomersGrid />} />
                 <Route path="/customer_categs" element={<CustCategFamGrid />} />
                 <Route path="/prod_categs" element={<ProdCategGrid />} />
+                <Route path="/signin" element={<SignIn />} />
               </Routes>
             </React.Suspense>
           </Box>

@@ -20,7 +20,7 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
     setFromParrent, editmodeText, outerEditContext }) => {
     const localEditContext = 'Customer.' + customer.id;
     const isInitialMount = useRef(true);
-    
+
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
     const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery(outerEditContext));
 

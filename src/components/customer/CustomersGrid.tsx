@@ -49,7 +49,7 @@ export default function CustomersGrid() {
             setCurrentCustomerId(id);
             const customer = customers.find(x => x.id === id) as CustomerFullType;
             setCurrentCustomerCategId(customer.category_id);
-            setNewCustomer(fullCustomerToCustomer(customer));
+            setNewCustomer(fullCustomerToCustomer(customer as CustomerFullType));
         }
         setOpenEditModal(true);
     };
