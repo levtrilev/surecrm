@@ -51,7 +51,6 @@ export default function OrdersGrid() {
             const order = orders.find(x => x.id === id) as OrderFullType;
             setNewOrder(fullOrderToOrder(order));
             setCurrentCustomerId(order.customer_id);
-            setCurrentCustomerId(order.customer_id);
         }
         setOpenEditModal(true);
     };

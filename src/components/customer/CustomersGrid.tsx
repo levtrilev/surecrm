@@ -43,6 +43,7 @@ export default function CustomersGrid() {
         if (id === 0) {
             setNewCustomer(newCustomerDefault);
             setCurrentCustomerId(0);
+            setCurrentCustomerCategId(0);
             editmodeText = 'create new mode';
         } else {
             editmodeText = 'edit mode';

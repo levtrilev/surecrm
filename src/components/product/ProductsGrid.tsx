@@ -42,6 +42,7 @@ export default function ProductsGrid() {
         if (id === 0) {
             setNewProduct(newProductDefault);
             setCurrentProductId(0);
+            setCurrentProdCategId(0);
             editmodeText = 'create new mode';
         } else {
             editmodeText = 'edit mode';
