@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentCustomerIdState, customerQuery, customersQuery, newCustomerDefault, newCustomerState, openEditModalCustomerState } from './data/customerState';
 import { openCustomerSelectorState } from './data/customerState';
-import SelectorBody from '../../shared/SelectorBody';
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import CustomerEdit from './CustomerEdit';
+import SelectorBodySearch from '../../shared/SelectorBodySearch';
 
 let editmodeText = '';
 
@@ -59,13 +59,14 @@ interface Props {
     }
     return (
         <>
-            <SelectorBody
+            <SelectorBodySearch
                 items={items}
                 dialogHeading={dialogHeading}
                 openSelector={openSelector}
                 closeSelector={closeSelector}
                 takeItem={takeItem}
                 editItem={editCustomerAction}
+                editContext={editContext}
             />
             {openEditModalCustomer ? <CustomerEdit
                 customer={customerToOpen ? customerToOpen : newCustomer}

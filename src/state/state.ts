@@ -37,6 +37,12 @@ export const showYesNoCancelDialogState = atomFamily({
   default: false,
 });
 
+const emptySelectorList: any[] = [];
+export const selectorListState = atomFamily({
+  key: "selectorListState",
+  default: emptySelectorList,
+});
+
 // ======= end of common utility object's state ======
 
 // ======= test object's state ============

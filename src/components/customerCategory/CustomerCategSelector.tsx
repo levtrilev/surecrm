@@ -4,8 +4,8 @@ import { currentCustCategIdState, custCategQuery, custCategsQuery,
     newCustCategDefault, newCustCategState, 
     openEditModalCustCategState } from './data/customerCategState';
 import { openCustCategSelectorState } from './data/customerCategState';
-import SelectorBody from '../../shared/SelectorBody';
 import CustomerCategEdit from './CustomerCategEdit';
+import SelectorBodySearch from '../../shared/SelectorBodySearch';
 
 let editmodeText = '';
 
@@ -55,13 +55,14 @@ export const CustCategSelector: React.FC<Props> = ({editContext, enableDruggable
     };
     return (
         <>
-            <SelectorBody
+            <SelectorBodySearch
                 items={items}
                 dialogHeading={dialogHeading}
                 openSelector={openSelector}
                 closeSelector={closeSelector}
                 takeItem={takeItem}
                 editItem={editCustomerCategAction}
+                editContext={editContext}
             />
             {openEditModalCustomerCateg ? <CustomerCategEdit
                 customerCateg={customerCategToEdit ? customerCategToEdit : newCustomerCateg}

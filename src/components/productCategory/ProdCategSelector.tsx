@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentProdCategIdState, newProdCategDefault, newProdCategState, openEditModalProdCategState, prodCategQuery, prodCategsQuery } from './data/prodCategState';
 import { openProdCategSelectorState } from './data/prodCategState';
-import SelectorBody from '../../shared/SelectorBody';
 import ProdCategEdit from './ProdCategEdit';
+import SelectorBodySearch from '../../shared/SelectorBodySearch';
 
 let editmodeText = '';
 
@@ -53,13 +53,14 @@ interface Props {
     };
     return (
         <>
-            <SelectorBody
+            <SelectorBodySearch
                 items={items}
                 dialogHeading={dialogHeading}
                 openSelector={openSelector}
                 closeSelector={closeSelector}
                 takeItem={takeItem}
                 editItem={editProdCategAction}
+                editContext={editContext}
             />
             {openEditModalProdCateg ? <ProdCategEdit
                 prodCateg={prodCategToEdit ? prodCategToEdit : newProdCateg}
