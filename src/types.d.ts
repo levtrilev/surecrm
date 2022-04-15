@@ -20,6 +20,7 @@ interface ProductType {
   tags: string;
   base_price: number;
   vat: number;
+  description: string;
   section_id: number;
   tenant_id: number;
 }
@@ -32,6 +33,7 @@ interface ProductFullType {
   tags: string;
   base_price: number;
   vat: number;
+  description: string;
   section_id: number;
   tenant_id: number;
   product_categories: ProductCategoryType;

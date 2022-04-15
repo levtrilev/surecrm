@@ -15,6 +15,7 @@ export const newProductDefault: ProductType = {
   tags: "",
   base_price: 0,
   vat: 0,
+  description: "",
   section_id: tenantId,
   tenant_id: sectionId,
 };

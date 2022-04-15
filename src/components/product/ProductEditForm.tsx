@@ -89,34 +89,33 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct,
                     <Grid container spacing={1}>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <TextField id="product-name" label="Product name" 
-                                onChange={onProductNameChange} 
-                                value={newProduct.name} />
+                                <TextField id="product-name" label="Product name"
+                                    onChange={onProductNameChange}
+                                    value={newProduct.name} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-category-id" label="Category ID (select)" 
-                                onClick={() => setOpenProdCategSelector(true)} 
-                                value={newProduct.category_id} />
+                                <TextField id="product-category-id" label="Category ID (select)"
+                                    onClick={() => setOpenProdCategSelector(true)}
+                                    value={newProduct.category_id} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-category" label="Category" 
-                                onClick={() => setOpenProdCategSelector(true)} 
-                                value={currentProdCateg.name} />
+                                <TextField id="product-category" label="Category"
+                                    onClick={() => setOpenProdCategSelector(true)}
+                                    value={currentProdCateg.name} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
-                                <TextField id="product-base-price" label="Base price" 
-                                onChange={onProductBasePriceChange} 
-                                value={newProduct.base_price} />
+                                <TextField id="product-base-price" label="Base price"
+                                    onChange={onProductBasePriceChange}
+                                    value={newProduct.base_price} />
                             </Grid>
                             <Grid item xs={4}>
-                                <TextField id="product-vat" label="VAT,%" 
-                                onChange={onProductVatChange} 
-                                value={newProduct.vat} />
+                                <TextField id="product-vat" label="VAT,%"
+                                    onChange={onProductVatChange}
+                                    value={newProduct.vat} />
                             </Grid>
                         </Grid>
-
                         <Grid container item spacing={3}>
                             <Grid item xs={4}>
                                 <Button onClick={updateProduct}>
@@ -135,7 +134,7 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct,
                             </Grid>
                         </Grid>
                     </Grid>
-                    {openProdCategSelector ? <ProdCategSelector editContext={editContext} enableDruggableParent={()=>{}}/> : <></>}
+                    {openProdCategSelector ? <ProdCategSelector editContext={editContext} enableDruggableParent={() => { }} /> : <></>}
                 </Box>
             </Modal>
         </React.Fragment>
