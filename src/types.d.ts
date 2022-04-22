@@ -54,6 +54,7 @@ interface OrderType {
   customer_id: number;
   total_amount: number;
   deleted: boolean;
+  description: string;
   section_id: number;
   tenant_id: number;
 }
@@ -66,9 +67,43 @@ interface OrderFullType {
   customer_id: number;
   total_amount: number;
   deleted: boolean;
+  description: string;
   section_id: number;
   tenant_id: number;
   customers: CustomerType;
+}
+
+interface OrderProductsType {
+  id: number;
+  order_id: number;
+  product_id: number;
+  quantity: number;
+  item_price: number;
+  line_price_total: number;
+  discount_percent: number;
+  line_total: number;
+  line_total_vat: number;
+  weight: number;
+  volume: number;
+  section_id: number;
+  tenant_id: number;
+}
+
+interface OrderProductsFullType {
+  id: number;
+  order_id: number;
+  product_id: number;
+  quantity: number;
+  item_price: number;
+  line_price_total: number;
+  discount_percent: number;
+  line_total: number;
+  line_total_vat: number;
+  weight: number;
+  volume: number;
+  section_id: number;
+  tenant_id: number;
+  products: ProductType;
 }
 
 interface CustomerType {

@@ -1,7 +1,5 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import { Dialog, DialogContent, DialogTitle, Grid, TextField, Typography } from '@mui/material';
-import { Item } from '../../shared/elements';
+import { Checkbox, debounce, Dialog, DialogContent, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { newOrderState } from './data/orderState';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -10,20 +8,25 @@ import { CustomerSelector } from '../customer/CustomerSelector';
 import { isModifiedState } from '../../state/state';
 import PaperComponentEnabled from '../../shared/PaperComponentEnabled';
 import PaperComponentDisabled from '../../shared/PaperComponentDisabled';
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { OrderProductsTable } from './OrderProductsTable';
 
 interface Props {
     order: OrderType;
+    orderProducts: OrderProductsFullType[];
     updateOrder: () => void;
     handleClose: () => void;
     modalState: boolean;
     editmodeText: string;
     editContext: string;
+    orderProductsEditRef: any;
 }
 
-export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
-    handleClose, modalState, editmodeText, editContext }) => {
-    const localEditContext = 'Order.' + order.id
+export const OrderFormDialog: React.FC<Props> = ({ order, orderProducts, updateOrder,
+    handleClose, modalState, editmodeText, editContext, orderProductsEditRef }) => {
+
+    const isInitialMount = useRef(-1);
+    const localEditContext = 'Order.' + order.id;
     const paperComponentEnabledRef = useRef(PaperComponentEnabled);
     const paperComponentDisabledRef = useRef(PaperComponentDisabled);
     const paperComponentRef = useRef(PaperComponentEnabled);
@@ -32,11 +35,44 @@ export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
     const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery(editContext));
 
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
+
     const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
     const [openCustomerSelector, setOpenCustomerSelector] = useRecoilState(openCustomerSelectorState);
 
+    const [orderDescriptionValue, setOrderDescriptionValue] = React.useState(newOrder.description);
+
+
+    // #region onOrderDescriptionChange
+    const onOrderDescriptionChange = (event: any) => {
+        setOrderDescriptionValue(event.target.value);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedSendDescription = useCallback(
+        debounce(
+            () => {
+                setNewOrder({ ...newOrder, 'description': orderDescriptionValue });
+                setIsModified(true);
+            },
+            1000
+        ), [orderDescriptionValue]);
+    useEffect(() => {
+        if (isInitialMount.current < 0) {
+            isInitialMount.current += 1;
+        } else {
+            debouncedSendDescription();
+        }
+    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        , [orderDescriptionValue]
+    );
+    // #endregion onOrderDescriptionChange
+
     const onOrderNumberChange = (event: any) => {
         setNewOrder({ ...newOrder, 'number': event.target.value, 'name': event.target.value });
+        setIsModified(true);
+    };
+    const onOrderTotalAmountChange = (event: any) => {
+        setNewOrder({ ...newOrder, 'total_amount': event.target.value });
         setIsModified(true);
     };
     const enableDruggableParent = () => {
@@ -47,6 +83,10 @@ export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
         refreshCustomer();
         paperComponentRef.current = paperComponentDisabledRef.current;
     };
+    const onOrderDeletedToggle = (event: any) => {
+        setNewOrder({ ...newOrder, 'deleted': event.target.checked });
+        setIsModified(true);
+    };
     return (
         <Dialog
             open={modalState}
@@ -55,56 +95,70 @@ export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
             aria-labelledby="draggable-dialog-title"
         >
             <DialogContent>
-                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-                    <Grid container spacing={1}>
-                        <Grid container item spacing={3}>
-                            <Grid item xs={11}>
-                                <Item>
-                                    <Typography variant="h6" gutterBottom component="div">
-                                        {`Order id: ${order.id} (${editmodeText})`}
-                                    </Typography>
-                                </Item>
-                            </Grid>
-                            <Grid item xs={1}>
-                            </Grid>
-                        </Grid>
+                <Grid container spacing={1} columns={16}>
+                    <Grid item xs={9}>
+                        <Typography variant="subtitle2" gutterBottom component="div">
+                            {`Заказ №${newOrder.number} (id: ${order.id} ${editmodeText})`}
+                        </Typography>
                     </Grid>
-                </DialogTitle>
-                <Box mt={2}></Box>
-                <Grid container spacing={1}>
-                    <Grid container item spacing={3}>
-                        <Grid item xs={4}>
-                            <TextField id="order-number" label="Order number" onChange={onOrderNumberChange} value={newOrder.number} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            <TextField id="order-customer-id" label="Customer ID (select)"
-                                onClick={clickOpenCustomerSelector}
-                                value={newOrder.customer_id} />
-                        </Grid>
-                        <Grid item xs={4}>
-                            <TextField id="customer" label="Customer"
-                                onClick={clickOpenCustomerSelector}
-                                value={currentCustomer.name} />
-                        </Grid>
+                    <Grid item xs={3}>
+                        <FormControlLabel control={<Checkbox checked={newOrder.deleted}
+                            onChange={onOrderDeletedToggle} />} label="отменено" />
                     </Grid>
-                    <Grid container item spacing={3}>
-                        <Grid item xs={4}>
-                            <Button onClick={updateOrder}>
-                                save
-                            </Button>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Button onClick={handleClose}>
-                                Exit
-                            </Button>
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Button onClick={goToEditDoc}>
-                                    Go tab
-                                </Button> */}
-                        </Grid>
+                    <Grid item xs={2}>
+                        <Button onClick={updateOrder}>
+                            save
+                        </Button>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button onClick={handleClose}>
+                            Exit
+                        </Button>
                     </Grid>
                 </Grid>
+                <Grid container spacing={1} columns={16}>
+                    <Grid item xs={16}>
+                        <hr />
+                    </Grid>
+                </Grid>
+                <Grid container item spacing={1} columns={16}>
+                    <Grid item xs={4}>
+                        <TextField id="order-number" label="Номер заказа" onChange={onOrderNumberChange}
+                            value={newOrder.number} size="small" margin="dense" />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField id="order-date" label="Дата заказа"
+                            value={newOrder.date} size="small" margin="dense" />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField id="customer" label="Покупатель(выберите)"
+                            onClick={clickOpenCustomerSelector} fullWidth
+                            value={currentCustomer.name} size="small" margin="dense" />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField id="order-customer-id" label="ID"
+                            onClick={clickOpenCustomerSelector}
+                            value={newOrder.customer_id} size="small" margin="dense" />
+                    </Grid>
+                </Grid>
+                <Grid container item spacing={1} columns={16}>
+                    <Grid item xs={4}>
+                        <TextField type="number"
+                            id="total_amount" label="Сумма заказа, руб"
+                            value={newOrder.total_amount} size="small" margin="dense"
+                            onChange={onOrderTotalAmountChange} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField id="description" label="Описание" onChange={onOrderDescriptionChange}
+                            value={orderDescriptionValue} size="small" margin="dense" fullWidth />
+                    </Grid>
+                </Grid>
+                <OrderProductsTable
+                    orderProducts={orderProducts}
+                    orderProductsEditRef={orderProductsEditRef}
+                    orderId={order.id}
+                    editContext={editContext}
+                />
                 {openCustomerSelector ? <CustomerSelector editContext={editContext} enableDruggableParent={enableDruggableParent} /> : <></>}
             </DialogContent>
         </Dialog >

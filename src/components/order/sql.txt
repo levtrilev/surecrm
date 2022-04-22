@@ -1,0 +1,9 @@
+select api.orders.id as order_id, api.order_products.product_id, 
+api.products.name as product_name, api.products.description as product_description,
+api.order_products.quantity, api.order_products.base_price, 
+api.order_products.discount_percent, api.order_products.cost, 
+api.order_products.weight, api.order_products.volume
+
+from api.orders, api.order_products, api.products 
+where api.orders.id = api.order_products.order_id 
+and api.order_products.product_id = api.products.id

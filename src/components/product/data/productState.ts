@@ -29,6 +29,11 @@ export const openProductSelectorState = atom({
   default: false,
 });
 
+export const openEditModalProductState = atom({
+  key: "openEditModalProductState",
+  default: false,
+});
+
 export const productsQuery = selector({
   key: "productsQuery",
   get: async ({ get }) => {

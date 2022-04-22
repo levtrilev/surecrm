@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { newOrderState, orderQuery, ordersFullQuery } from './data/orderState';
-import { postNewOrder, putUpdatedOrder } from './data/orderDao';
+import { newOrderState, orderProductsFullQuery, orderQuery, ordersFullQuery } from './data/orderState';
+import { deleteOrderProducts, postNewOrder, postOrderProducts, putUpdatedOrder } from './data/orderDao';
 import { currentCustomerIdState } from '../customer/data/customerState';
 import { useEffect, useRef } from 'react';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
@@ -21,8 +21,12 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
     const localEditContext = 'Order.' + order.id;
     const isInitialMount = useRef(true);
 
+    const orderProducts = useRecoilValue(orderProductsFullQuery(outerEditContext)) as OrderProductsFullType[];
+    const orderProductsEditRef = useRef([...orderProducts]);
+
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
     const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery(outerEditContext));
+    const refreshOrderProducts = useRecoilRefresher_UNSTABLE(orderProductsFullQuery(outerEditContext));
 
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
     const currentCustomerId = useRecoilValue(currentCustomerIdState(outerEditContext));
@@ -39,24 +43,34 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
         }
     };
 
-    const updateOrder = () => {
+    const updateOrder = async () => {
         if (newOrder.id === 0) {
-            postNewOrder(newOrder);
+            let newOrderId = await postNewOrder(newOrder);
+            // debugger;
+            if (orderProductsEditRef.current.length > 0) {
+                const tmp = orderProductsEditRef.current as OrderProductsFullType[];
+                orderProductsEditRef.current = tmp.map((el) => { return { ...el, order_id: newOrderId }; });
+                // debugger;
+                postOrderProducts(orderProductsEditRef.current);
+            }
         } else {
-            putUpdatedOrder(newOrder);
+            await putUpdatedOrder(newOrder);
+            await deleteOrderProducts(newOrder.id);
+            await postOrderProducts(orderProductsEditRef.current);
         }
         setIsModified(false);
         setTimeout(refreshOrders, 300);
         setTimeout(refreshOrder, 300);
+        setTimeout(refreshOrderProducts, 300);
     };
 
     useEffect(() => {
         if (isInitialMount.current) {
             isInitialMount.current = false;
-         } else {
+        } else {
             setNewOrder({ ...newOrder, 'customer_id': currentCustomerId });
             setIsModified(true);
-         }
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerId]);
 
@@ -67,7 +81,7 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
         } else if (yesNoCancel === 'no') {
             setFromParrent(false);
         }
-            setYesNoCancel('neutral');
+        setYesNoCancel('neutral');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [yesNoCancel]);
 
@@ -75,11 +89,13 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
         <div>
             <OrderFormDialog
                 order={order}
+                orderProducts={orderProducts}
                 updateOrder={updateOrder}
                 handleClose={handleClose}
                 modalState={modalState}
                 editmodeText={editmodeText}
                 editContext={outerEditContext}
+                orderProductsEditRef={orderProductsEditRef}
             />
             {showYesNoCancelDialog ? <YesNoCancelDialog
                 questionToConfirm={`Save changes (id = ${order.id}) ?`}
@@ -92,3 +108,7 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
 }
 
 export default OrderEdit;
+
+function orderProductsFullQueryEdit(outerEditContext: string): import("recoil").RecoilState<unknown> {
+    throw new Error('Function not implemented.');
+}

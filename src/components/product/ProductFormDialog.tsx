@@ -47,7 +47,7 @@ export const ProductFormDialog: React.FC<Props> = ({ product, updateProduct,
         setIsModified(true);
     };
 
-    // =={======= onProductNameChange ================
+    // #region onProductNameChange
     const onProductNameChange = (event: any) => {
         setInputNameValue(event.target.value);
     };
@@ -70,9 +70,9 @@ export const ProductFormDialog: React.FC<Props> = ({ product, updateProduct,
         // eslint-disable-next-line react-hooks/exhaustive-deps
         , [inputNameValue]
     )
-    // ========= onProductNameChange ==============}==
+    // #endregion onProductNameChange
 
-    // =={======= onProductDescriptionChange =========
+    // #region onProductDescriptionChange
     const onProductDescriptionChange = (event: any) => {
             setInputDescriptionValue(event.target.value);
         };
@@ -95,7 +95,7 @@ export const ProductFormDialog: React.FC<Props> = ({ product, updateProduct,
         // eslint-disable-next-line react-hooks/exhaustive-deps
         , [inputDescriptionValue]
     );
-    // ========= onProductDescriptionChange =======}==
+    // #endregion onProductDescriptionChange
 
     const onProductBlockedToggle = (event: any) => {
         setNewProduct({ ...newProduct, 'blocked': event.target.checked });

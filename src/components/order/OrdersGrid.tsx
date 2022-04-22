@@ -103,29 +103,35 @@ export default function OrdersGrid() {
             ),
         },
         {
-            field: 'name',
-            headerName: 'Order name',
+            field: 'number',
+            headerName: '№',
+            width: 60,
+            editable: false,
+        },
+                {
+            field: 'description',
+            headerName: 'Описание',
             width: 300,
             editable: false,
         },
         {
             field: 'customer',
             type: 'string',
-            headerName: 'Customer',
+            headerName: 'Покупатель',
             width: 120,
             editable: false,
             valueGetter: getCustomer,
         },
         {
-            field: 'blocked',
+            field: 'deleted',
             type: 'boolean',
-            headerName: 'Blocked',
+            headerName: 'Отменено',
             width: 90,
             editable: false,
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: 'Действия',
             width: 130,
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
@@ -176,3 +182,7 @@ export default function OrdersGrid() {
         </div>
     );
 }
+function ordersProductsFullQuery(ordersProductsFullQuery: any): OrderProductsFullType[] {
+    throw new Error('Function not implemented.');
+}
+
