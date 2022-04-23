@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { newOrderState, orderProductsFullQuery, orderQuery, ordersFullQuery } from './data/orderState';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { currentOrderIdState, newOrderState, orderProductsFullQuery, orderQuery, ordersFullQuery } from './data/orderState';
 import { deleteOrderProducts, postNewOrder, postOrderProducts, putUpdatedOrder } from './data/orderDao';
 import { currentCustomerIdState } from '../customer/data/customerState';
 import { useEffect, useRef } from 'react';
@@ -23,6 +23,10 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
 
     const orderProducts = useRecoilValue(orderProductsFullQuery(outerEditContext)) as OrderProductsFullType[];
     const orderProductsEditRef = useRef([...orderProducts]);
+    // const setOrderProductsLines = useSetRecoilState(orderProductsLinesState(outerEditContext));
+    // setOrderProductsLines([...orderProducts]);
+    
+    const setCurrentOrderId = useSetRecoilState(currentOrderIdState(outerEditContext));
 
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
     const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery(outerEditContext));
@@ -46,11 +50,13 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
     const updateOrder = async () => {
         if (newOrder.id === 0) {
             let newOrderId = await postNewOrder(newOrder);
+            setCurrentOrderId(newOrderId);
             // debugger;
             if (orderProductsEditRef.current.length > 0) {
                 const tmp = orderProductsEditRef.current as OrderProductsFullType[];
                 orderProductsEditRef.current = tmp.map((el) => { return { ...el, order_id: newOrderId }; });
                 // debugger;
+                // setOrderProductsLines(orderProductsEditRef.current);
                 postOrderProducts(orderProductsEditRef.current);
             }
         } else {
@@ -89,7 +95,6 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
         <div>
             <OrderFormDialog
                 order={order}
-                orderProducts={orderProducts}
                 updateOrder={updateOrder}
                 handleClose={handleClose}
                 modalState={modalState}

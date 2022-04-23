@@ -13,7 +13,6 @@ import { OrderProductsTable } from './OrderProductsTable';
 
 interface Props {
     order: OrderType;
-    orderProducts: OrderProductsFullType[];
     updateOrder: () => void;
     handleClose: () => void;
     modalState: boolean;
@@ -22,7 +21,7 @@ interface Props {
     orderProductsEditRef: any;
 }
 
-export const OrderFormDialog: React.FC<Props> = ({ order, orderProducts, updateOrder,
+export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
     handleClose, modalState, editmodeText, editContext, orderProductsEditRef }) => {
 
     const isInitialMount = useRef(-1);
@@ -40,7 +39,6 @@ export const OrderFormDialog: React.FC<Props> = ({ order, orderProducts, updateO
     const [openCustomerSelector, setOpenCustomerSelector] = useRecoilState(openCustomerSelectorState);
 
     const [orderDescriptionValue, setOrderDescriptionValue] = React.useState(newOrder.description);
-
 
     // #region onOrderDescriptionChange
     const onOrderDescriptionChange = (event: any) => {
@@ -154,7 +152,6 @@ export const OrderFormDialog: React.FC<Props> = ({ order, orderProducts, updateO
                     </Grid>
                 </Grid>
                 <OrderProductsTable
-                    orderProducts={orderProducts}
                     orderProductsEditRef={orderProductsEditRef}
                     orderId={order.id}
                     editContext={editContext}

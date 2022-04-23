@@ -3,24 +3,22 @@ import { Grid, IconButton, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import * as React from 'react';
 import PlusOne from '@mui/icons-material/PlusOne';
-import { useEffect, useRef, useState } from 'react';
-import { newOrderProductsDefault } from './data/orderState';
+import { useEffect, useRef } from 'react';
+import { currentOrderIdState, newOrderProductsDefault, newOrderState } from './data/orderState';
 import { currentProductIdState, newProductDefault, openProductSelectorState, productQuery } from '../product/data/productState';
 import { ProductSelector } from '../product/ProductSelector';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import PaperComponentEnabled from '../../shared/PaperComponentEnabled';
 import PaperComponentDisabled from '../../shared/PaperComponentDisabled';
 import { isModifiedState } from '../../state/state';
-import { NewLineKind } from 'typescript';
 
 interface Props {
-    orderProducts: OrderProductsFullType[];
     orderProductsEditRef: any;
     orderId: number;
     editContext: string;
 }
 
-export const OrderProductsTable: React.FC<Props> = ({ orderProducts, orderProductsEditRef, orderId, editContext }) => {
+export const OrderProductsTable: React.FC<Props> = ({ orderProductsEditRef, orderId, editContext }) => {
     const isInitialMountRef = useRef(true);
     const lineIdRef = useRef(0);
     const newLineIdRef = useRef(0);
@@ -29,7 +27,13 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProducts, orderProduc
     const paperComponentDisabledRef = useRef(PaperComponentDisabled);
     const paperComponentRef = useRef(PaperComponentEnabled);
 
-    const [orderProductsLines, setOrderProductsLines] = useState([...orderProducts]);
+    // const [orderProductsLines, setOrderProductsLines] = useRecoilState(orderProductsLinesState(editContext));
+    // setOrderProductsLines(orderProductsEditRef.current);
+
+    const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
+    const [newOrder, setNewOrder] = useRecoilState(newOrderState);
+
+    // const [orderProductsLines, setOrderProductsLines] = useState([...orderProducts]);
     const [openProductSelector, setOpenProductSelector] = useRecoilState(openProductSelectorState);
     const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
 
@@ -39,25 +43,28 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProducts, orderProduc
 
     const deleteLineAction = (id: number) => {
         let tmp = [] as OrderProductsFullType[];
-        for (let i = 0; i < orderProducts.length; i++) {
-            if (orderProducts[i].id !== id) {
-                tmp.push(orderProducts[i]);
+        for (let i = 0; i < orderProductsEditRef.current.length; i++) {
+            if (orderProductsEditRef.current[i].id !== id) {
+                tmp.push(orderProductsEditRef.current[i]);
             }
         }
         orderProductsEditRef.current = tmp;
-        setOrderProductsLines(tmp);
+        // setOrderProductsLines(tmp);
         setIsModified(true);
         // debugger;
     }
     const addLineAction = () => {
+        // debugger;
         let newLine: OrderProductsFullType = { ...newOrderProductsDefault, products: {...newProductDefault, name: "выберите товар"} };
-        newLine.order_id = orderId;
+        newLine.order_id = currentOrderId;
+        setNewOrder({...newOrder, id: currentOrderId});
+        // let orderIdTest = orderId;
         newLine.product_id = 0;
         newLineIdRef.current += 1;
         newLine.id = newLineIdRef.current;
-        let tmp = [...orderProductsLines, newLine];
+        let tmp = [...orderProductsEditRef.current, newLine];
         orderProductsEditRef.current = tmp;
-        setOrderProductsLines(tmp);
+        // setOrderProductsLines(tmp);
         setIsModified(true);
     }
     const handleRowEditCommit = React.useCallback(
@@ -67,7 +74,7 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProducts, orderProduc
             const value = params.value;
             let tmp = orderProductsEditRef.current as OrderProductsFullType[];
             orderProductsEditRef.current = tmp.map(el => el.id === id ? { ...el, [key]: value } : el);
-            setOrderProductsLines(orderProductsEditRef.current);
+            // setOrderProductsLines(orderProductsEditRef.current);
             setIsModified(true);
         },
         []
@@ -84,7 +91,7 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProducts, orderProduc
         } else {
             let tmp = orderProductsEditRef.current as OrderProductsFullType[];
             orderProductsEditRef.current = tmp.map(el => el.id === lineIdRef.current ? { ...el, product_id: currentProductId, products: currentProduct } : el);
-            setOrderProductsLines(orderProductsEditRef.current);
+            // setOrderProductsLines(orderProductsEditRef.current);
             setIsModified(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,7 +171,7 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProducts, orderProduc
             </Grid>
             <div style={{ height: 300, width: '100%' }}>
                 <DataGrid
-                    rows={orderProductsLines}
+                    rows={orderProductsEditRef.current}
                     columns={prodColumns}
                     rowHeight={32}
                     pageSize={8}

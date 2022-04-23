@@ -36,10 +36,10 @@ export const newOrderState = atom({
   default: newOrderDefault,
 });
 
-export const newOrderProductsState = atom({
-  key: "newOrderProductsState",
-  default: newOrderProductsDefault,
-});
+// export const orderProductsLinesState = atomFamily({
+//   key: "newOrderProductsState",
+//   default: [] as OrderProductsFullType[],
+// });
 
 export const ordersQuery = selector({
   key: "ordersQuery",
