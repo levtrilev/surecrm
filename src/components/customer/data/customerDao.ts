@@ -6,12 +6,15 @@ export async function postNewCustomer(newCustomer: CustomerType) {
 
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Prefer': 'return=representation', 'Authorization': 'Bearer ' + TOKEN },
     body: JSON.stringify([{ ...customer }])
   };
   // console.log(requestOptions);
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
   console.log(response.status);
+  let location = response.headers.get('Location');
+  let newCustomerId = location !== null ? location.split("eq.").pop() : "0";
+  return newCustomerId !== undefined ? +newCustomerId : 0;
 }
 
 export async function deleteCustomer(id: number) {

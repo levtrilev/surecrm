@@ -65,7 +65,6 @@ export const CustCategSelector: React.FC<Props> = ({editContext, enableDruggable
                 editContext={editContext}
             />
             {openEditModalCustomerCateg ? <CustomerCategEdit
-                customerCateg={customerCategToEdit ? customerCategToEdit : newCustomerCateg}
                 modalState={openEditModalCustomerCateg}
                 setFromParrent={setOpenEditModalCustomerCateg}
                 editmodeText={editmodeText}

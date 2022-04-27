@@ -69,7 +69,6 @@ interface Props {
                 editContext={editContext}
             />
             {openEditModalProduct ? <ProductEdit
-                product={productToOpen ? productToOpen : newProduct}
                 modalState={openEditModalProduct}
                 setFromParrent={setOpenEditModalProduct}
                 editmodeText={editmodeText}

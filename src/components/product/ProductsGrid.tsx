@@ -23,10 +23,9 @@ export default function ProductsGrid() {
     const products = useRecoilValue(productsFullQuery) as ProductFullType[];
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
-    const currentProductId = useRecoilValue(currentProductIdState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
-    const setCurrentProductId = useSetRecoilState(currentProductIdState(editContext));
-    let productToOpen = useRecoilValue(productQuery(editContext));
+    const [currentProductId, setCurrentProductId] = useRecoilState(currentProductIdState(editContext));
+    // let productToOpen = useRecoilValue(productQuery(editContext));
     const setNewProduct = useSetRecoilState(newProductState);
     const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
@@ -43,9 +42,9 @@ export default function ProductsGrid() {
             setNewProduct(newProductDefault);
             setCurrentProductId(0);
             setCurrentProdCategId(0);
-            editmodeText = 'create new mode';
+            editmodeText = 'создание нового';
         } else {
-            editmodeText = 'edit mode';
+            editmodeText = 'редактирование';
             setCurrentProductId(id);
             const product = products.find(x => x.id === id) as ProductFullType;
             setNewProduct(fullProductToProduct(product));
@@ -54,9 +53,10 @@ export default function ProductsGrid() {
         setOpenEditModal(true);
     };
     const copyProductAction = (id: number) => {
-        editmodeText = 'copy mode';
+        editmodeText = 'копирование';
         const product = products.find(x => x.id === id) as ProductFullType;
         setNewProduct({ ...(fullProductToProduct(product)), 'id': 0 });
+        setCurrentProductId(0);
         setCurrentProdCategId(product.category_id);
         setOpenEditModal(true);
     };
@@ -79,14 +79,14 @@ export default function ProductsGrid() {
         },
         {
             field: 'name',
-            headerName: 'Product name',
+            headerName: 'Товар',
             width: 300,
             editable: false,
         },
         {
             field: 'category',
             type: 'string',
-            headerName: 'Category',
+            headerName: 'Категория',
             width: 120,
             editable: false,
             valueGetter: getCategory,
@@ -94,27 +94,27 @@ export default function ProductsGrid() {
         {
             field: 'base_price',
             type: 'number',
-            headerName: 'Price',
+            headerName: 'Цена',
             width: 100,
             editable: false,
         },
         {
             field: 'vat',
             type: 'number',
-            headerName: 'VAT,%',
+            headerName: 'НДС,%',
             width: 80,
             editable: false,
         },
         {
             field: 'blocked',
             type: 'boolean',
-            headerName: 'Blocked',
+            headerName: 'Заблокирован',
             width: 90,
             editable: false,
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: 'Действия',
             width: 130,
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
@@ -175,10 +175,9 @@ export default function ProductsGrid() {
                     disableSelectionOnClick
                     onRowClick={(params, event, details) => openDocument(params, event, details)}
                 />
-                {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${productToOpen.id}) ?`}
+                {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${currentProductId}) ?`}
                     modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
                 {openEditModal ? <ProductEdit
-                    product={productToOpen ? productToOpen : newProduct}
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}

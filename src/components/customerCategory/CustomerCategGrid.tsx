@@ -25,16 +25,12 @@ export default function CustCategGrid() {
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [currentCustomerCategId, setCurrentCustomerCategId] = useRecoilState(currentCustCategIdState(editContext));
-    let customerCategToOpen = useRecoilValue(custCategQuery(editContext));
+    // let customerCategToOpen = useRecoilValue(custCategQuery(editContext));
     const setNewCustomerCateg = useSetRecoilState(newCustCategState);
 
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const newCustomerCateg = useRecoilValue(newCustCategState);
+    // const newCustomerCateg = useRecoilValue(newCustCategState);
 
-    // const fullProductToProduct = (product: ProductFullType) => {
-    //     let { product_categories, ...newProduct } = product;
-    //     return (newProduct);
-    // };
     const editCustomerCategAction = (id: number) => {
         if (id === 0) {
             setNewCustomerCateg(newCustCategDefault);
@@ -73,13 +69,13 @@ export default function CustCategGrid() {
         },
         {
             field: 'name',
-            headerName: 'Category name',
+            headerName: 'Категория',
             width: 300,
             editable: false,
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: 'Действия',
             width: 130,
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
@@ -130,13 +126,12 @@ export default function CustCategGrid() {
                     onRowClick={(params, event, details) => {}}
                 />
                 {showYesCancelDialog ? <YesCancelDialog
-                    questionToConfirm={`Delete category (id = ${customerCategToOpen.id}) ?`}
+                    questionToConfirm={`Delete category (id = ${currentCustomerCategId}) ?`}
                     modalState={showYesCancelDialog}
                     setFromParrent={setShowYesCancelDialog}
                     editContext={editContext}
                 /> : <></>}
                 {openEditModal ? <CustomerCategEdit
-                    customerCateg={customerCategToOpen ? customerCategToOpen : newCustomerCateg}
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}

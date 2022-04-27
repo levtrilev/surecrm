@@ -6,13 +6,14 @@ export async function postNewProduct(newProduct: ProductType) {
 
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Prefer': 'return=representation', 'Authorization': 'Bearer ' + TOKEN },
     body: JSON.stringify([{ ...product }])
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
   console.log(response.status);
-  // .then(response => response.json())
-  // .then(data => console.log(data.status));
+  let location = response.headers.get('Location');
+  let newProductId = location !== null ? location.split("eq.").pop() : "0";
+  return newProductId !== undefined ? +newProductId : 0;
 }
 export async function putUpdatedProduct(product: ProductType) {
 

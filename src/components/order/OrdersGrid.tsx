@@ -26,7 +26,7 @@ export default function OrdersGrid() {
     const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const setCurrentOrderId = useSetRecoilState(currentOrderIdState(editContext));
-    let orderToOpen = useRecoilValue(orderQuery(editContext));
+    // let orderToOpen = useRecoilValue(orderQuery(editContext));
     const setNewOrder = useSetRecoilState(newOrderState);
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
 
@@ -169,10 +169,9 @@ export default function OrdersGrid() {
                 disableSelectionOnClick
                 onRowClick={(params, event, details) => openDocument(params, event, details)}
             />
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${orderToOpen.id}) ?`}
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${currentOrderId}) ?`}
                 modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext}/> : <></>}
             {openEditModal ? <OrderEdit
-                order={orderToOpen ? orderToOpen : newOrder}
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={editmodeText}

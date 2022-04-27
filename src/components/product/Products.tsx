@@ -19,7 +19,7 @@ const Products: React.FC = () => {
 
     const products = useRecoilValue(productsFullQuery) as ProductFullType[];
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
-    const productToOpen = useRecoilValue(productQuery(editContext));
+    // const productToOpen = useRecoilValue(productQuery(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
@@ -57,13 +57,12 @@ const Products: React.FC = () => {
                 {products.length ? products.map(product => <Product key={product.id} product={product} />) : <tr>"Нет записей"</tr>}
             </div>
             {openEditModal ? <ProductEdit
-                product={productToOpen}
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={editmodeText}
                 outerEditContext={editContext}
             /> : <></>}
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${productToOpen.id}) ?`} 
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${currentProductId}) ?`} 
             modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext}/> : <></>}
         </div>
     )

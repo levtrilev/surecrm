@@ -69,7 +69,6 @@ export const CustomerSelector: React.FC<Props> = ({ editContext, enableDruggable
                 editContext={editContext}
             />
             {openEditModalCustomer ? <CustomerEdit
-                customer={customerToOpen ? customerToOpen : newCustomer}
                 modalState={openEditModalCustomer}
                 setFromParrent={setOpenEditModalCustomer}
                 editmodeText={editmodeText}

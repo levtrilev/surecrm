@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { postNewCustomer, putUpdatedCustomer } from './data/customerDao';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { newCustomerState, customersFullQuery, customerQuery } from './data/customerState'
+import { newCustomerState, customersFullQuery, customerQuery, currentCustomerIdState } from './data/customerState'
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import { useEffect, useRef } from 'react';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
@@ -11,14 +11,14 @@ import { CustomerFormDialog } from './CustomerFormDialog';
 interface Props {
     modalState: boolean;
     setFromParrent: SetOpenModal;
-    customer: CustomerType;
     editmodeText: string;
     outerEditContext: string;
 }
 
-export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
+export const CustomerEdit: React.FC<Props> = ({ modalState,
     setFromParrent, editmodeText, outerEditContext }) => {
-    const localEditContext = 'Customer.' + customer.id;
+    const [currentCustomerId, setCurrentCustomerId] = useRecoilState(currentCustomerIdState(outerEditContext));
+    const localEditContext = 'Customer.' + currentCustomerId;
     const isInitialMount = useRef(true);
 
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
@@ -39,11 +39,13 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
         }
     };
 
-    const updateCustomer = () => {
+    const updateCustomer = async () => {
         if (newCustomer.id === 0) {
-            postNewCustomer(newCustomer);
+            let newCustomerId = await postNewCustomer(newCustomer);
+            setCurrentCustomerId(newCustomerId);
+            setNewCustomer({ ...newCustomer, id: newCustomerId });
         } else {
-            putUpdatedCustomer(newCustomer);
+            await putUpdatedCustomer(newCustomer);
         }
         setIsModified(false);
         setTimeout(refreshCustomers, 300);
@@ -53,10 +55,10 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
     useEffect(() => {
         if (isInitialMount.current) {
             isInitialMount.current = false;
-         } else {
+        } else {
             setNewCustomer({ ...newCustomer, 'category_id': currentCustomerCategId });
             setIsModified(true);
-         }
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerCategId]);
 
@@ -74,7 +76,6 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
     return (
         <div>
             <CustomerFormDialog
-                customer={customer}
                 updateCustomer={updateCustomer}
                 handleClose={handleClose}
                 modalState={modalState}
@@ -82,7 +83,7 @@ export const CustomerEdit: React.FC<Props> = ({ customer, modalState,
                 editContext={outerEditContext}
             />
             {showYesNoCancelDialog ? <YesNoCancelDialog
-                questionToConfirm={`Save changes (id = ${customer.id}) ?`}
+                questionToConfirm={`Save changes (id = ${currentCustomerId}) ?`}
                 modalState={showYesNoCancelDialog}
                 setFromParrent={setShowYesNoCancelDialog}
                 editContext={localEditContext}

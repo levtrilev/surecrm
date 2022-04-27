@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { currentProdCategIdState, newProdCategDefault, newProdCategState, openEditModalProdCategState, prodCategQuery, prodCategsQuery } from './data/prodCategState';
+import { currentProdCategIdState, newProdCategDefault, newProdCategState, openEditModalProdCategState, prodCategsQuery } from './data/prodCategState';
 import { openProdCategSelectorState } from './data/prodCategState';
 import ProdCategEdit from './ProdCategEdit';
 import SelectorBodySearch from '../../shared/SelectorBodySearch';
@@ -19,7 +19,7 @@ interface Props {
     const setEditProdCategId = useSetRecoilState(currentProdCategIdState('self'));
 
     const [openEditModalProdCateg, setOpenEditModalProdCateg] = useRecoilState(openEditModalProdCategState);
-    let prodCategToEdit = useRecoilValue(prodCategQuery('self'));
+    // let prodCategToEdit = useRecoilValue(prodCategQuery('self'));
     const [newProdCateg, setNewProdCateg] = useRecoilState(newProdCategState);
 
     const openSelector = openProdCategSelector;
@@ -63,11 +63,10 @@ interface Props {
                 editContext={editContext}
             />
             {openEditModalProdCateg ? <ProdCategEdit
-                prodCateg={prodCategToEdit ? prodCategToEdit : newProdCateg}
                 modalState={openEditModalProdCateg}
                 setFromParrent={setOpenEditModalProdCateg}
                 editmodeText={editmodeText}
-                editContext={editContext}
+                outerEditContext={editContext}
             /> : <></>}
         </>
     );

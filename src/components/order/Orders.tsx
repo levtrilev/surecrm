@@ -69,7 +69,6 @@ const Orders: React.FC = () => {
                 {orders.length ? orders.map(order => <Order key={order.id} order={order} />) : <tr>"Нет записей"</tr>}
             </div>
             {openEditModal ? <OrderEdit
-                order={orderToOpen}
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={'edit mode'}

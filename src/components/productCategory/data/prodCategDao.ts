@@ -5,11 +5,14 @@ export async function postNewProdCateg(newProdCateg: ProductCategoryType) {
     let { id, ...prodCateg } = newProdCateg;
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+        headers: { 'Content-Type': 'application/json', 'Prefer': 'return=representation', 'Authorization': 'Bearer ' + TOKEN },
         body: JSON.stringify([{ ...prodCateg }])
     };
     const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
     console.log(response.status);
+    let location = response.headers.get('Location');
+    let newProdCategId = location !== null ? location.split("eq.").pop() : "0";
+    return newProdCategId !== undefined ? +newProdCategId : 0;
 }
 
 export async function putUpdatedProdCateg(prodCateg: ProductCategoryType) {

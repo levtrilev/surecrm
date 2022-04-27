@@ -27,7 +27,7 @@ export default function CustomersGrid() {
     const currentCustomerId = useRecoilValue(currentCustomerIdState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
-    let customerToOpen = useRecoilValue(customerQuery(editContext));
+    // let customerToOpen = useRecoilValue(customerQuery(editContext));
     const setNewCustomer = useSetRecoilState(newCustomerState);
     const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
@@ -44,9 +44,9 @@ export default function CustomersGrid() {
             setNewCustomer(newCustomerDefault);
             setCurrentCustomerId(0);
             setCurrentCustomerCategId(0);
-            editmodeText = 'create new mode';
+            editmodeText = 'создание нового';
         } else {
-            editmodeText = 'edit mode';
+            editmodeText = 'редактирование';
             setCurrentCustomerId(id);
             const customer = customers.find(x => x.id === id) as CustomerFullType;
             setCurrentCustomerCategId(customer.category_id);
@@ -55,7 +55,7 @@ export default function CustomersGrid() {
         setOpenEditModal(true);
     };
     const copyCustomerAction = (id: number) => {
-        editmodeText = 'copy mode';
+        editmodeText = 'копирование';
         const customer = customers.find(x => x.id === id) as CustomerFullType;
         setNewCustomer({ ...(fullCustomerToCustomer(customer)), 'id': 0 });
         setCurrentCustomerCategId(customer.category_id);
@@ -104,14 +104,14 @@ export default function CustomersGrid() {
         },
         {
             field: 'name',
-            headerName: 'Customer name',
+            headerName: 'Покупатель',
             width: 300,
             editable: false,
         },
         {
             field: 'category',
             type: 'string',
-            headerName: 'Category',
+            headerName: 'Категория',
             width: 120,
             editable: false,
             valueGetter: getCategory,
@@ -119,13 +119,13 @@ export default function CustomersGrid() {
         {
             field: 'blocked',
             type: 'boolean',
-            headerName: 'Blocked',
+            headerName: 'Заблокирован',
             width: 90,
             editable: false,
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: 'Действия',
             width: 130,
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
@@ -163,10 +163,9 @@ export default function CustomersGrid() {
                 disableSelectionOnClick
                 onRowClick={(params, event, details) => openDocument(params, event, details)}
             />
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${customerToOpen.id}) ?`}
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${currentCustomerId}) ?`}
                 modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
             {openEditModal ? <CustomerEdit
-                customer={customerToOpen ? customerToOpen : newCustomer}
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={editmodeText}

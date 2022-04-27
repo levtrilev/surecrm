@@ -6,7 +6,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { newProductState } from './data/productState';
+import { currentProductIdState, newProductState } from './data/productState';
 import { openProdCategSelectorState, prodCategQuery } from '../productCategory/data/prodCategState';
 import { ProdCategSelector } from '../productCategory/ProdCategSelector';
 import { isModifiedState } from '../../state/state';
@@ -15,7 +15,6 @@ import PaperComponentEnabled from '../../shared/PaperComponentEnabled';
 import PaperComponentDisabled from '../../shared/PaperComponentDisabled';
 
 interface Props {
-    product: ProductType;
     updateProduct: () => void;
     handleClose: () => void;
     modalState: boolean;
@@ -23,11 +22,11 @@ interface Props {
     editContext: string;
 }
 
-export const ProductFormDialog: React.FC<Props> = ({ product, updateProduct,
+export const ProductFormDialog: React.FC<Props> = ({ updateProduct,
     handleClose, modalState, editmodeText, editContext }) => {
     const isInitialMount = useRef(-2);
-
-    const localEditContext = 'Product.' + product.id;
+    const currentProductId = useRecoilValue(currentProductIdState(editContext));
+    const localEditContext = 'Product.' + currentProductId;
     const paperComponentEnabledRef = useRef(PaperComponentEnabled);
     const paperComponentDisabledRef = useRef(PaperComponentDisabled);
     const paperComponentRef = useRef(PaperComponentEnabled);
@@ -128,7 +127,7 @@ export const ProductFormDialog: React.FC<Props> = ({ product, updateProduct,
                             <Grid item xs={8}>
                                 <Item>
                                     <Typography variant="h6" gutterBottom component="div">
-                                        {`ID товара: ${product.id} (${editmodeText})`}
+                                        {`ID товара: ${currentProductId} (${editmodeText})`}
                                     </Typography>
                                 </Item>
                             </Grid>

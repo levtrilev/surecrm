@@ -52,7 +52,6 @@ const Customers: React.FC = () => {
                 {customers.length ? customers.map(customer => <Customer key={customer.id} customer={customer} />) : <tr>"Нет записей"</tr>}
             </div>
             {openEditModal ? <CustomerEdit
-                customer={customerToOpen}
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText='edit mode'

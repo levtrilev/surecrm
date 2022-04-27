@@ -5,7 +5,7 @@ import { Item } from '../../shared/elements';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
-import { newCustomerState } from './data/customerState';
+import { currentCustomerIdState, newCustomerState } from './data/customerState';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { custCategQuery, openCustCategSelectorState } from '../customerCategory/data/customerCategState';
 import { CustCategSelector } from '../customerCategory/CustomerCategSelector';
@@ -15,7 +15,6 @@ import PaperComponentEnabled from '../../shared/PaperComponentEnabled';
 import PaperComponentDisabled from '../../shared/PaperComponentDisabled';
 
 interface Props {
-    customer: CustomerType;
     updateCustomer: () => void;
     handleClose: () => void;
     modalState: boolean;
@@ -23,9 +22,10 @@ interface Props {
     editContext: string;
 }
 
-export const CustomerFormDialog: React.FC<Props> = ({ customer, updateCustomer,
+export const CustomerFormDialog: React.FC<Props> = ({ updateCustomer,
     handleClose, modalState, editmodeText, editContext }) => {
-    const localEditContext = 'Customer.' + customer.id
+    const currentCustomerId = useRecoilValue(currentCustomerIdState(editContext));
+    const localEditContext = 'Customer.' + currentCustomerId;
     const paperComponentEnabledRef = useRef(PaperComponentEnabled);
     const paperComponentDisabledRef = useRef(PaperComponentDisabled);
     const paperComponentRef = useRef(PaperComponentEnabled);
@@ -67,7 +67,7 @@ export const CustomerFormDialog: React.FC<Props> = ({ customer, updateCustomer,
                             <Grid item xs={8}>
                                 <Item>
                                     <Typography variant="h6" gutterBottom component="div">
-                                        {`Customer id: ${customer.id} (${editmodeText})`}
+                                        {`Customer id: ${currentCustomerId} (${editmodeText})`}
                                     </Typography>
                                 </Item>
                             </Grid>

@@ -9,12 +9,16 @@ export async function postNewCustomerCateg(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      'Prefer': 'return=representation',
       Authorization: "Bearer " + TOKEN,
     },
     body: JSON.stringify([{ ...customerCateg }]),
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
   console.log(response.status);
+  let location = response.headers.get('Location');
+  let newСustomerCategId = location !== null ? location.split("eq.").pop() : "0";
+  return newСustomerCategId !== undefined ? +newСustomerCategId : 0;
 }
 
 export async function putUpdatedCustomerCateg(

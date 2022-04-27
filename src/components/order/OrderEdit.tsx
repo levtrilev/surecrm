@@ -11,22 +11,18 @@ import { OrderFormDialog } from './OrderFormDialog';
 interface Props {
     modalState: boolean;
     setFromParrent: SetOpenModal;
-    order: OrderType;
     editmodeText: string;
     outerEditContext: string;
 }
 
-export const OrderEdit: React.FC<Props> = ({ order, modalState,
+export const OrderEdit: React.FC<Props> = ({ modalState,
     setFromParrent, editmodeText, outerEditContext }) => {
-    const localEditContext = 'Order.' + order.id;
+    const [currentOrderId, setCurrentOrderId] = useRecoilState(currentOrderIdState(outerEditContext));
+    const localEditContext = 'Order.' + currentOrderId;
     const isInitialMount = useRef(true);
 
     const orderProducts = useRecoilValue(orderProductsFullQuery(outerEditContext)) as OrderProductsFullType[];
     const orderProductsEditRef = useRef([...orderProducts]);
-    // const setOrderProductsLines = useSetRecoilState(orderProductsLinesState(outerEditContext));
-    // setOrderProductsLines([...orderProducts]);
-    
-    const setCurrentOrderId = useSetRecoilState(currentOrderIdState(outerEditContext));
 
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
     const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery(outerEditContext));
@@ -48,15 +44,14 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
     };
 
     const updateOrder = async () => {
+        // debugger;
         if (newOrder.id === 0) {
             let newOrderId = await postNewOrder(newOrder);
             setCurrentOrderId(newOrderId);
-            // debugger;
+            setNewOrder({ ...newOrder, id: newOrderId });
             if (orderProductsEditRef.current.length > 0) {
                 const tmp = orderProductsEditRef.current as OrderProductsFullType[];
                 orderProductsEditRef.current = tmp.map((el) => { return { ...el, order_id: newOrderId }; });
-                // debugger;
-                // setOrderProductsLines(orderProductsEditRef.current);
                 postOrderProducts(orderProductsEditRef.current);
             }
         } else {
@@ -94,7 +89,6 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
     return (
         <div>
             <OrderFormDialog
-                order={order}
                 updateOrder={updateOrder}
                 handleClose={handleClose}
                 modalState={modalState}
@@ -103,7 +97,7 @@ export const OrderEdit: React.FC<Props> = ({ order, modalState,
                 orderProductsEditRef={orderProductsEditRef}
             />
             {showYesNoCancelDialog ? <YesNoCancelDialog
-                questionToConfirm={`Save changes (id = ${order.id}) ?`}
+                questionToConfirm={`Save changes (id = ${currentOrderId}) ?`}
                 modalState={showYesNoCancelDialog}
                 setFromParrent={setShowYesNoCancelDialog}
                 editContext={localEditContext}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { putUpdatedProduct, postNewProduct } from './data/productDao';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { newProductState, productQuery, productsFullQuery } from './data/productState'
+import { currentProductIdState, newProductState, productQuery, productsFullQuery } from './data/productState'
 import { currentProdCategIdState } from '../productCategory/data/prodCategState';
 import { useEffect, useRef } from 'react';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
@@ -11,14 +11,14 @@ import { ProductFormDialog } from './ProductFormDialog';
 interface Props {
     modalState: boolean;
     setFromParrent: SetOpenModal;
-    product: ProductType;
     editmodeText: string;
     outerEditContext: string;
 }
 
-export const ProductEdit: React.FC<Props> = ({ product, modalState,
+export const ProductEdit: React.FC<Props> = ({ modalState,
     setFromParrent, editmodeText, outerEditContext }) => {
-    const localEditContext = 'Product.' + product.id;
+    const [currentProductId, setCurrentProductId] = useRecoilState(currentProductIdState(outerEditContext));
+    const localEditContext = 'Product.' + currentProductId;
     const isInitialMount = useRef(true);
 
     const refreshProduct = useRecoilRefresher_UNSTABLE(productQuery(outerEditContext));
@@ -39,11 +39,13 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState,
         }
     };
 
-    const updateProduct = () => {
+    const updateProduct = async () => {
         if (newProduct.id === 0) {
-            postNewProduct(newProduct);
+            let newProductId = await postNewProduct(newProduct);
+            setCurrentProductId(newProductId);
+            setNewProduct({ ...newProduct, id: newProductId });
         } else {
-            putUpdatedProduct(newProduct);
+            await putUpdatedProduct(newProduct);
         }
         setIsModified(false);
         setTimeout(refreshProducts, 300);
@@ -52,10 +54,10 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState,
     useEffect(() => {
         if (isInitialMount.current) {
             isInitialMount.current = false;
-         } else {
+        } else {
             setNewProduct({ ...newProduct, 'category_id': currentProdCategId });
             setIsModified(true);
-         }
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentProdCategId]);
 
@@ -74,7 +76,6 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState,
     return (
         <div>
             <ProductFormDialog
-                product={product}
                 updateProduct={updateProduct}
                 editmodeText={editmodeText}
                 handleClose={handleClose}
@@ -82,7 +83,7 @@ export const ProductEdit: React.FC<Props> = ({ product, modalState,
                 editContext={outerEditContext}
             />
             {showYesNoCancelDialog ? <YesNoCancelDialog
-                questionToConfirm={`Save changes (id = ${product.id}) ?`}
+                questionToConfirm={`Save changes (id = ${currentProductId}) ?`}
                 modalState={showYesNoCancelDialog}
                 setFromParrent={setShowYesNoCancelDialog}
                 editContext={localEditContext}

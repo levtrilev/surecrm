@@ -10,11 +10,11 @@ import DraftsIcon from "@mui/icons-material/Drafts";
 export const settings_bak = ["Profile", "Account", "Dashboard", "Logout"];
 export const settings = ["Users", "Tenants", "Sections", "Roles"];
 export const pages = [
-  "Products",
-  "Customers",
-  "Orders",
-  "Customer categ",
-  "Product categ",
+  "Товары",
+  "Покупатели",
+  "Заказы",
+  "Категории покупателей",
+  "Категории товаров",
   "Products_",
   "Customers_",
   "Orders_",

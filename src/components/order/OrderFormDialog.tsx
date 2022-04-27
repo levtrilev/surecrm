@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Checkbox, debounce, Dialog, DialogContent, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import { newOrderState } from './data/orderState';
+import { currentOrderIdState, newOrderState } from './data/orderState';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { customerQuery, openCustomerSelectorState } from '../customer/data/customerState';
 import { CustomerSelector } from '../customer/CustomerSelector';
@@ -12,7 +12,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { OrderProductsTable } from './OrderProductsTable';
 
 interface Props {
-    order: OrderType;
     updateOrder: () => void;
     handleClose: () => void;
     modalState: boolean;
@@ -21,11 +20,12 @@ interface Props {
     orderProductsEditRef: any;
 }
 
-export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
+export const OrderFormDialog: React.FC<Props> = ({ updateOrder,
     handleClose, modalState, editmodeText, editContext, orderProductsEditRef }) => {
 
     const isInitialMount = useRef(-1);
-    const localEditContext = 'Order.' + order.id;
+    const [currentOrderId, setCurrentOrderId] = useRecoilState(currentOrderIdState(editContext));
+    const localEditContext = 'Order.' + currentOrderId;
     const paperComponentEnabledRef = useRef(PaperComponentEnabled);
     const paperComponentDisabledRef = useRef(PaperComponentDisabled);
     const paperComponentRef = useRef(PaperComponentEnabled);
@@ -96,7 +96,7 @@ export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
                 <Grid container spacing={1} columns={16}>
                     <Grid item xs={9}>
                         <Typography variant="subtitle2" gutterBottom component="div">
-                            {`Заказ №${newOrder.number} (id: ${order.id} ${editmodeText})`}
+                            {`Заказ №${newOrder.number} (id: ${currentOrderId} ${editmodeText})`}
                         </Typography>
                     </Grid>
                     <Grid item xs={3}>
@@ -153,7 +153,7 @@ export const OrderFormDialog: React.FC<Props> = ({ order, updateOrder,
                 </Grid>
                 <OrderProductsTable
                     orderProductsEditRef={orderProductsEditRef}
-                    orderId={order.id}
+                    orderId={currentOrderId}
                     editContext={editContext}
                 />
                 {openCustomerSelector ? <CustomerSelector editContext={editContext} enableDruggableParent={enableDruggableParent} /> : <></>}

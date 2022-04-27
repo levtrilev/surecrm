@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Dialog, DialogContent, DialogTitle, Grid, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { newProdCategState } from './data/prodCategState';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { currentProdCategIdState, newProdCategState } from './data/prodCategState';
 import { isModifiedState } from '../../state/state';
 import { useRef } from 'react';
 import PaperComponent from '../../shared/PaperComponentEnabled';
 
 interface Props {
-    prodCateg: ProductCategoryType;
     updateProdCateg: () => void;
     editmodeText: string;
     handleClose: () => void;
@@ -16,10 +15,10 @@ interface Props {
     editContext: string;
 }
 
-export const ProdCategFormDialog: React.FC<Props> = ({ prodCateg, updateProdCateg, editmodeText,
+export const ProdCategFormDialog: React.FC<Props> = ({ updateProdCateg, editmodeText,
     handleClose, modalState, editContext }) => {
-
-    const localEditContext = 'ProdCateg.' + prodCateg.id;
+    const currentProdCategId = useRecoilValue(currentProdCategIdState(editContext));
+    const localEditContext = 'ProdCateg.' + currentProdCategId;
     const paperComponentRef = useRef(PaperComponent);
 
     const [newProdCateg, setNewProdCateg] = useRecoilState(newProdCategState);
@@ -41,7 +40,7 @@ export const ProdCategFormDialog: React.FC<Props> = ({ prodCateg, updateProdCate
                 <DialogContent>
                     <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
                         <Typography variant="h6" gutterBottom component="div">
-                            {`Categoty id: ${prodCateg.id} (${editmodeText})`}
+                            {`Categoty id: ${currentProdCategId} (${editmodeText})`}
                         </Typography>
                     </DialogTitle>
                     <Grid container spacing={1}>

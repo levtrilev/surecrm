@@ -10,9 +10,7 @@ export async function postNewOrder(newOrder: OrderType) {
         headers: { 'Content-Type': 'application/json', 'Prefer': 'return=representation', 'Authorization': 'Bearer ' + TOKEN },
         body: JSON.stringify([{ ...order }])
     };
-    // console.log(requestOptions);
     const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
-    // debugger;
     console.log(response.status);
     let location = response.headers.get('Location');
     let newOrderId = location !== null ? location.split("eq.").pop() : "0";

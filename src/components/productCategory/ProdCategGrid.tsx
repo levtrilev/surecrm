@@ -1,4 +1,3 @@
-// это пока загрлушка
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
@@ -32,15 +31,15 @@ export default function ProdCategGrid() {
     const setNewProdCateg = useSetRecoilState(newProdCategState);
 
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const newProdCateg = useRecoilValue(newProdCategState);
+    // const newProdCateg = useRecoilValue(newProdCategState);
 
     const editProdCategAction = (id: number) => {
         if (id === 0) {
             setNewProdCateg(newProdCategDefault);
             setCurrentProdCategId(0);
-            editmodeText = 'create new mode';
+            editmodeText = 'создание нового';
         } else {
-            editmodeText = 'edit mode';
+            editmodeText = 'редактирование';
             setCurrentProdCategId(id);
             const prodCateg = prodCategs.find(x => x.id === id) as ProductCategoryType;
             setNewProdCateg(prodCateg);
@@ -49,7 +48,7 @@ export default function ProdCategGrid() {
     };
 
     const copyProdCategAction = (id: number) => {
-        editmodeText = 'copy mode';
+        editmodeText = 'копирование';
         const prodCateg = prodCategs.find(x => x.id === id) as ProductCategoryType;
         setNewProdCateg({ ...prodCateg, 'id': 0 });
         setOpenEditModal(true);
@@ -71,13 +70,13 @@ export default function ProdCategGrid() {
         },
         {
             field: 'name',
-            headerName: 'Category name',
+            headerName: 'Категория',
             width: 300,
             editable: false,
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: 'Действия',
             width: 130,
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
@@ -134,13 +133,11 @@ export default function ProdCategGrid() {
                     editContext={editContext}
                 /> : <></>}
                 {openEditModal ? <ProdCategEdit
-                    prodCateg={prodCategToOpen ? prodCategToOpen : newProdCateg}
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}
-                    editContext={editContext}
+                    outerEditContext={editContext}
                 /> : <></>}
-
             </div>
         </>
     );
