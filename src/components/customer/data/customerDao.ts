@@ -1,7 +1,7 @@
 import { DOMAIN, TOKEN } from "../../../shared/appConsts";
 const ENDPOINT = 'view_customers';
 
-export async function postNewCustomer(newCustomer: CustomerType) {
+export async function postNewCustomer(newCustomer: CustomerType): Promise<number> {
   let { id, ...customer } = newCustomer; // look at https://stackoverflow.com/questions/34698905/how-can-i-clone-a-javascript-object-except-for-one-key
 
   const requestOptions = {
@@ -17,7 +17,7 @@ export async function postNewCustomer(newCustomer: CustomerType) {
   return newCustomerId !== undefined ? +newCustomerId : 0;
 }
 
-export async function deleteCustomer(id: number) {
+export async function deleteCustomer(id: number): Promise<void> {
   const requestOptions = {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
@@ -26,7 +26,7 @@ export async function deleteCustomer(id: number) {
   console.log(response.status, response.url);
 }
 
-export async function putUpdatedCustomer(customer: CustomerType) {
+export async function putUpdatedCustomer(customer: CustomerType): Promise<void> {
 
   const requestOptions = {
     method: 'PUT',
@@ -37,13 +37,13 @@ export async function putUpdatedCustomer(customer: CustomerType) {
   console.log(response.status);
 }
 
-export const customersQueryDao = async () => {
+export const customersQueryDao = async (): Promise<CustomerType[]> => {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
-  const customers = await response.json();
+  const customers = await response.json() as CustomerType[];
   if (response.status !== 200) {
     console.log(`Bad HTTP request status ${response.status}`);
   }

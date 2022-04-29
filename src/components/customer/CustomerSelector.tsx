@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { currentCustomerIdState, customerQuery, customersQuery, newCustomerDefault, newCustomerState, openEditModalCustomerState } from './data/customerState';
+import { currentCustomerIdState, customersQuery, newCustomerDefault, newCustomerState, openEditModalCustomerState } from './data/customerState';
 import { openCustomerSelectorState } from './data/customerState';
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import CustomerEdit from './CustomerEdit';
@@ -23,19 +23,18 @@ export const CustomerSelector: React.FC<Props> = ({ editContext, enableDruggable
         enableDruggableParent();
     }
 
-    const [newCustomer, setNewCustomer] = useRecoilState(newCustomerState);
+    const setNewCustomer = useSetRecoilState(newCustomerState);
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
     const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const [openEditModalCustomer, setOpenEditModalCustomer] = useRecoilState(openEditModalCustomerState);
-    let customerToOpen = useRecoilValue(customerQuery(editContext));
 
     // This is copy_paste from CustomersGrid 
     // (except using of names: items, setOpenEditModalCustomer), sorry
-    const editCustomerAction = (id: number) => {
+    const editCustomerAction = (id: number): void => {
         if (id === 0) {
             setNewCustomer(newCustomerDefault);
             setCurrentCustomerId(0);
-            setCurrentCustomerCategId(0); // Can not understand - no need for this line in Product
+            setCurrentCustomerCategId(0);
             editmodeText = 'create new mode';
         } else {
             editmodeText = 'edit mode';
@@ -46,12 +45,11 @@ export const CustomerSelector: React.FC<Props> = ({ editContext, enableDruggable
         }
         setOpenEditModalCustomer(true);
     };
-    // This is copy_paste from CustomersGrid
-    const fullCustomerToCustomer = (customer: CustomerFullType) => {
+    const fullCustomerToCustomer = (customer: CustomerFullType): CustomerType => {
         let { customer_categories, ...newCustomer } = customer;
         return (newCustomer);
     };
-    const takeItem = (id: number) => {
+    const takeItem = (id: number): void => {
         setCurrentCustomerId(id);
         setTimeout(() => {
             setOpenCustomerSelector(false);

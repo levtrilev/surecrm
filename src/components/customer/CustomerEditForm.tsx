@@ -46,11 +46,11 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
     const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
     const [openCustomerCategSelector, setOpenCustomerCategSelector] = useRecoilState(openCustCategSelectorState);
 
-    const onCustomerNameChange = (event: any) => {
+    const onCustomerNameChange = (event: any): void => {
         setNewCustomer({ ...newCustomer, 'name': event.target.value });
         setIsModified(true);
     };
-    const onCustomerBlockedToggle = (event: any) => {
+    const onCustomerBlockedToggle = (event: any): void => {
         setNewCustomer({ ...newCustomer, 'blocked': event.target.checked });
         setIsModified(true);
     };

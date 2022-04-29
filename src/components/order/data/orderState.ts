@@ -50,7 +50,7 @@ export const ordersQuery = selector({
 
 export const ordersFullQuery = selector({
   key: "ordersFullQuery",
-  get: async ({ get }) => {
+  get: async ({ get }): Promise<OrderFullType[]> => {
     return ordersFullQueryDao();
   },
 });

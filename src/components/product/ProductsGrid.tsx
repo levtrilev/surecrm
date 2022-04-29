@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
-import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { useGridApiRef, useGridApiEventHandler } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
@@ -10,7 +10,7 @@ import { ProductEdit } from './ProductEdit';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteProduct } from './data/productDao';
 import { useEffect } from 'react';
-import { currentProductIdState, newProductDefault, newProductState, productQuery, productsFullQuery } from './data/productState'
+import { currentProductIdState, newProductDefault, newProductState, productsFullQuery } from './data/productState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import { currentProdCategIdState } from '../productCategory/data/prodCategState';
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
@@ -18,26 +18,24 @@ import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 let editmodeText = '';
 const editContext = 'ProductsGrid';
 
-export default function ProductsGrid() {
+export default function ProductsGrid(): JSX.Element {
 
     const products = useRecoilValue(productsFullQuery) as ProductFullType[];
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [currentProductId, setCurrentProductId] = useRecoilState(currentProductIdState(editContext));
-    // let productToOpen = useRecoilValue(productQuery(editContext));
     const setNewProduct = useSetRecoilState(newProductState);
     const setCurrentProdCategId = useSetRecoilState(currentProdCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const newProduct = useRecoilValue(newProductState);
 
-    const fullProductToProduct = (product: ProductFullType) => {
+    const fullProductToProduct = (product: ProductFullType): ProductType => {
         // removes product_categories
         // to transform productFullType to productType
         let { product_categories, ...newProduct } = product;
         return (newProduct);
     };
-    const editProductAction = (id: number) => {
+    const editProductAction = (id: number): void => {
         if (id === 0) {
             setNewProduct(newProductDefault);
             setCurrentProductId(0);
@@ -52,7 +50,7 @@ export default function ProductsGrid() {
         }
         setOpenEditModal(true);
     };
-    const copyProductAction = (id: number) => {
+    const copyProductAction = (id: number): void => {
         editmodeText = 'копирование';
         const product = products.find(x => x.id === id) as ProductFullType;
         setNewProduct({ ...(fullProductToProduct(product)), 'id': 0 });
@@ -60,12 +58,12 @@ export default function ProductsGrid() {
         setCurrentProdCategId(product.category_id);
         setOpenEditModal(true);
     };
-    const deleteProductAction = (id: number) => {
+    const deleteProductAction = (id: number): void => {
         setShowYesCancelDialog(true);
         setCurrentProductId(id);
         setTimeout(refreshProducts, 300);
     };
-    function getCategory(params: any) {
+    function getCategory(params: GridValueGetterParams<any, any>): string {
         return `${params.row.product_categories.name || ''}`;
     }
     const prodColumns: GridColDef[] = [

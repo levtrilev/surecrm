@@ -43,6 +43,7 @@ export async function putUpdatedOrder(order: OrderType) {
 }
 
 export async function deleteOrder(id: number) {
+    await deleteOrderProducts(id);
     const requestOptions = {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },

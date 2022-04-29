@@ -24,7 +24,7 @@ export const OrderFormDialog: React.FC<Props> = ({ updateOrder,
     handleClose, modalState, editmodeText, editContext, orderProductsEditRef }) => {
 
     const isInitialMount = useRef(-1);
-    const [currentOrderId, setCurrentOrderId] = useRecoilState(currentOrderIdState(editContext));
+    const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
     const localEditContext = 'Order.' + currentOrderId;
     const paperComponentEnabledRef = useRef(PaperComponentEnabled);
     const paperComponentDisabledRef = useRef(PaperComponentDisabled);
@@ -34,14 +34,13 @@ export const OrderFormDialog: React.FC<Props> = ({ updateOrder,
     const refreshCustomer = useRecoilRefresher_UNSTABLE(customerQuery(editContext));
 
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
-
     const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
     const [openCustomerSelector, setOpenCustomerSelector] = useRecoilState(openCustomerSelectorState);
 
     const [orderDescriptionValue, setOrderDescriptionValue] = React.useState(newOrder.description);
 
     // #region onOrderDescriptionChange
-    const onOrderDescriptionChange = (event: any) => {
+    const onOrderDescriptionChange = (event: any): void => {
         setOrderDescriptionValue(event.target.value);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,23 +64,23 @@ export const OrderFormDialog: React.FC<Props> = ({ updateOrder,
     );
     // #endregion onOrderDescriptionChange
 
-    const onOrderNumberChange = (event: any) => {
+    const onOrderNumberChange = (event: any): void => {
         setNewOrder({ ...newOrder, 'number': event.target.value, 'name': event.target.value });
         setIsModified(true);
     };
-    const onOrderTotalAmountChange = (event: any) => {
+    const onOrderTotalAmountChange = (event: any): void => {
         setNewOrder({ ...newOrder, 'total_amount': event.target.value });
         setIsModified(true);
     };
-    const enableDruggableParent = () => {
+    const enableDruggableParent = (): void => {
         paperComponentRef.current = paperComponentEnabledRef.current;
     };
-    const clickOpenCustomerSelector = () => {
+    const clickOpenCustomerSelector = (): void => {
         setOpenCustomerSelector(true);
         refreshCustomer();
         paperComponentRef.current = paperComponentDisabledRef.current;
     };
-    const onOrderDeletedToggle = (event: any) => {
+    const onOrderDeletedToggle = (event: any): void => {
         setNewOrder({ ...newOrder, 'deleted': event.target.checked });
         setIsModified(true);
     };

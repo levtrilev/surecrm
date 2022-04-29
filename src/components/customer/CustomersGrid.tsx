@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
-import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { useGridApiRef, useGridApiEventHandler } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
-// import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CustomerEdit } from './CustomerEdit';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteCustomer } from './data/customerDao';
-import { currentCustomerIdState, newCustomerDefault, newCustomerState, customerQuery, customersFullQuery } from './data/customerState'
+import { currentCustomerIdState, newCustomerDefault, newCustomerState, customersFullQuery } from './data/customerState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
@@ -19,27 +18,25 @@ import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 let editmodeText = '';
 const editContext = 'CustomersGrid';
 
-export default function CustomersGrid() {
+export default function CustomersGrid(): JSX.Element {
 
-    const customers = useRecoilValue(customersFullQuery) as CustomerFullType[];
+    const customers = useRecoilValue(customersFullQuery);
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
     const currentCustomerId = useRecoilValue(currentCustomerIdState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
-    // let customerToOpen = useRecoilValue(customerQuery(editContext));
     const setNewCustomer = useSetRecoilState(newCustomerState);
     const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const newCustomer = useRecoilValue(newCustomerState);
 
-    const fullCustomerToCustomer = (customer: CustomerFullType) => {
+    const fullCustomerToCustomer = (customer: CustomerFullType): CustomerType => {
         // removes customer_categories
         // to transform customerFullType to customerType
         let { customer_categories, ...newCustomer } = customer;
         return (newCustomer);
     };
-    const editCustomerAction = (id: number) => {
+    const editCustomerAction = (id: number): void => {
         if (id === 0) {
             setNewCustomer(newCustomerDefault);
             setCurrentCustomerId(0);
@@ -54,14 +51,14 @@ export default function CustomersGrid() {
         }
         setOpenEditModal(true);
     };
-    const copyCustomerAction = (id: number) => {
+    const copyCustomerAction = (id: number): void => {
         editmodeText = 'копирование';
         const customer = customers.find(x => x.id === id) as CustomerFullType;
         setNewCustomer({ ...(fullCustomerToCustomer(customer)), 'id': 0 });
         setCurrentCustomerCategId(customer.category_id);
         setOpenEditModal(true);
     };
-    const deleteCustomerAction = (id: number) => {
+    const deleteCustomerAction = (id: number): void => {
         setShowYesCancelDialog(true);
         setCurrentCustomerId(id);
         setTimeout(refreshCustomers, 300);
@@ -90,7 +87,7 @@ export default function CustomersGrid() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCustomerId, yesCancel]);
 
-    function getCategory(params: any) {
+    function getCategory(params: GridValueGetterParams<any, any>): string {
         return `${params.row.customer_categories?.name || ''}`;
     };
     const prodColumns: GridColDef[] = [

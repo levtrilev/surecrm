@@ -22,7 +22,7 @@ export const Product: React.FC<Props> = ({ product }) => {
     const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState(editContext));
     const setNewProduct = useSetRecoilState(newProductState);
 
-    const fullPtoductToProduct = (product: ProductFullType) => {
+    const fullPtoductToProduct = (product: ProductFullType): ProductType => {
         // removes product_categories
         // to transform productFullType to productType
         let { product_categories, ...newProduct } = product;
@@ -56,7 +56,7 @@ export const Product: React.FC<Props> = ({ product }) => {
                                 setCurrentProductId(product.id);
                                 setNewProduct(fullPtoductToProduct(product));
                                 setOpenEditModal(true);
-                                setCurrentProdCategId(product.category_id); // product.product_categories.id
+                                setCurrentProdCategId(product.category_id);
                             }}>
                                 <EditIcon />
                             </IconButton>

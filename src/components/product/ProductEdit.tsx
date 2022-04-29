@@ -31,7 +31,7 @@ export const ProductEdit: React.FC<Props> = ({ modalState,
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
     const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
 
-    const handleClose = () => {
+    const handleClose = (): void => {
         if (isModified) {
             setShowYesNoCancelDialog(true);
         } else {
@@ -39,7 +39,7 @@ export const ProductEdit: React.FC<Props> = ({ modalState,
         }
     };
 
-    const updateProduct = async () => {
+    const updateProduct = async (): Promise<void> => {
         if (newProduct.id === 0) {
             let newProductId = await postNewProduct(newProduct);
             setCurrentProductId(newProductId);

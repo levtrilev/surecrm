@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { currentProductIdState, productQuery, productsQuery, newProductDefault, newProductState, openEditModalProductState } from './data/productState';
+import { currentProductIdState, productsQuery, newProductDefault, newProductState, openEditModalProductState } from './data/productState';
 import { openProductSelectorState } from './data/productState';
 import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import ProductEdit from './ProductEdit';
@@ -13,7 +13,7 @@ interface Props {
     enableDruggableParent: () => void;
 }
     export const ProductSelector: React.FC<Props> = ({editContext, enableDruggableParent}) => {
-        const dialogHeading = 'Select a Product';
+        const dialogHeading = 'Выберите товар';
     const [openProductSelector, setOpenProductSelector] = useRecoilState(openProductSelectorState);
     const items = useRecoilValue(productsQuery) as ProductType[];
     const openSelector = openProductSelector;
@@ -23,11 +23,10 @@ interface Props {
         enableDruggableParent();
     }
 
-    const [newProduct, setNewProduct] = useRecoilState(newProductState);
+    const setNewProduct = useSetRecoilState(newProductState);
     const setCurrentProductId = useSetRecoilState(currentProductIdState(editContext));
     const setCurrentProductCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const [openEditModalProduct, setOpenEditModalProduct] = useRecoilState(openEditModalProductState);
-    let productToOpen = useRecoilValue(productQuery(editContext));
 
     // This is copy_paste from ProductsGrid 
     // (except using of names: items, setOpenEditModalProduct), sorry

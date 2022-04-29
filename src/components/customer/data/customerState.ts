@@ -40,7 +40,7 @@ export const customersQuery = selector({
 
 export const customersFullQuery = selector({
   key: "customersFullQuery",
-  get: async ({ get }) => {
+  get: async ({ get }): Promise<CustomerFullType[]> => {
     return customersFullQueryDao();
   },
 });

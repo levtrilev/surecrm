@@ -41,13 +41,13 @@ export const ProductFormDialog: React.FC<Props> = ({ updateProduct,
     const [inputDescriptionValue, setInputDescriptionValue] = React.useState(newProduct.description);
     const [inputNameValue, setInputNameValue] = React.useState(newProduct.name);
 
-    const onProductVatChange = (event: any) => {
+    const onProductVatChange = (event: any): void => {
         setNewProduct({ ...newProduct, 'vat': event.target.value });
         setIsModified(true);
     };
 
     // #region onProductNameChange
-    const onProductNameChange = (event: any) => {
+    const onProductNameChange = (event: any): void => {
         setInputNameValue(event.target.value);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,7 +72,7 @@ export const ProductFormDialog: React.FC<Props> = ({ updateProduct,
     // #endregion onProductNameChange
 
     // #region onProductDescriptionChange
-    const onProductDescriptionChange = (event: any) => {
+    const onProductDescriptionChange = (event: any): void => {
             setInputDescriptionValue(event.target.value);
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,18 +96,18 @@ export const ProductFormDialog: React.FC<Props> = ({ updateProduct,
     );
     // #endregion onProductDescriptionChange
 
-    const onProductBlockedToggle = (event: any) => {
+    const onProductBlockedToggle = (event: any): void => {
         setNewProduct({ ...newProduct, 'blocked': event.target.checked });
         setIsModified(true);
     };
-    const onProductBasePriceChange = (event: any) => {
+    const onProductBasePriceChange = (event: any): void => {
         setNewProduct({ ...newProduct, 'base_price': event.target.value });
         setIsModified(true);
     };
-    const enableDruggableParent = () => {
+    const enableDruggableParent = (): void => {
         paperComponentRef.current = paperComponentEnabledRef.current;
     };
-    const clickOpenProdCategSelector = () => {
+    const clickOpenProdCategSelector = (): void => {
         setOpenProdCategSelector(true);
         refreshProdCateg();
         paperComponentRef.current = paperComponentDisabledRef.current;

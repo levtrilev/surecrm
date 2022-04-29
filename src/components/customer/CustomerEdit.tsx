@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const CustomerEdit: React.FC<Props> = ({ modalState,
-    setFromParrent, editmodeText, outerEditContext }) => {
+    setFromParrent, editmodeText, outerEditContext }): JSX.Element => {
     const [currentCustomerId, setCurrentCustomerId] = useRecoilState(currentCustomerIdState(outerEditContext));
     const localEditContext = 'Customer.' + currentCustomerId;
     const isInitialMount = useRef(true);
@@ -31,7 +31,7 @@ export const CustomerEdit: React.FC<Props> = ({ modalState,
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
     const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
 
-    const handleClose = () => {
+    const handleClose = (): void => {
         if (isModified) {
             setShowYesNoCancelDialog(true);
         } else {
@@ -39,7 +39,7 @@ export const CustomerEdit: React.FC<Props> = ({ modalState,
         }
     };
 
-    const updateCustomer = async () => {
+    const updateCustomer = async (): Promise<void> => {
         if (newCustomer.id === 0) {
             let newCustomerId = await postNewCustomer(newCustomer);
             setCurrentCustomerId(newCustomerId);

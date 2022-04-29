@@ -15,7 +15,6 @@ interface Props {
 }
 
 export const Order: React.FC<Props> = ({ order }) => {
-    const editContext = 'ordr.' + order.id;
 
     const setCurrentOrderId = useSetRecoilState(currentOrderIdState(editContext));
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext))

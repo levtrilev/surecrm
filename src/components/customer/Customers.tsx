@@ -18,12 +18,13 @@ const Customers: React.FC = () => {
 
     const customers = useRecoilValue(customersFullQuery) as CustomerFullType[];
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersQuery);
-    const customerToOpen = useRecoilValue(customerQuery(editContext));
+    // const customerToOpen = useRecoilValue(customerQuery(editContext));
     const currentCustomerId = useRecoilValue(currentCustomerIdState(editContext));
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-
+    let editmodeText = 'edit mode';
+    
     useEffect(() => {
         if (yesCancel) {
             deleteCustomer(currentCustomerId);
@@ -54,10 +55,10 @@ const Customers: React.FC = () => {
             {openEditModal ? <CustomerEdit
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
-                editmodeText='edit mode'
+                editmodeText={editmodeText}
                 outerEditContext={editContext}
             /> : <></>}
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Customer (id = ${customerToOpen.id}) ?`}
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Customer (id = ${currentCustomerId}) ?`}
                 modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
         </div>
     )

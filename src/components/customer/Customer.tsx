@@ -15,14 +15,13 @@ interface Props {
 }
 
 export const Customer: React.FC<Props> = ({ customer }) => {
-    const editContext = 'cust.' + customer.id;
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
     const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
     const setOpenEditModal = useSetRecoilState(openEditModalState);
     const setShowYesCancelDialog = useSetRecoilState(showYesCancelDialogState(editContext));
     const setNewCustomer = useSetRecoilState(newCustomerState);
 
-    const fullCustomerToCustomer = (customer: CustomerFullType) => {
+    const fullCustomerToCustomer = (customer: CustomerFullType): CustomerType => {
         // removes customer_categories
         // to transform customerFullType to customerType
         let { customer_categories, ...newCustomer } = customer;

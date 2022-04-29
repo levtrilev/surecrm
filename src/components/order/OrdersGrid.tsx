@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
-import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { useGridApiRef, useGridApiEventHandler } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
@@ -10,7 +10,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { OrderEdit } from './OrderEdit';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteOrder } from './data/orderDao';
-import { currentOrderIdState, newOrderDefault, newOrderState, orderQuery, ordersFullQuery } from './data/orderState'
+import { currentOrderIdState, newOrderDefault, newOrderState, ordersFullQuery } from './data/orderState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
 import { currentCustomerIdState } from '../customer/data/customerState';
@@ -18,28 +18,25 @@ import { currentCustomerIdState } from '../customer/data/customerState';
 let editmodeText = '';
 let editContext = 'OrdersGrid';
 
-export default function OrdersGrid() {
+export default function OrdersGrid(): JSX.Element {
 
-    const orders = useRecoilValue(ordersFullQuery) as OrderFullType[];
+    const orders = useRecoilValue(ordersFullQuery);
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
     const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const setCurrentOrderId = useSetRecoilState(currentOrderIdState(editContext));
-    // let orderToOpen = useRecoilValue(orderQuery(editContext));
     const setNewOrder = useSetRecoilState(newOrderState);
     const setCurrentCustomerId = useSetRecoilState(currentCustomerIdState(editContext));
-
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    const newOrder = useRecoilValue(newOrderState);
 
-    const fullOrderToOrder = (order: OrderFullType) => {
+    const fullOrderToOrder = (order: OrderFullType): OrderType => {
         // removes customers
         // to transform orderFullType to orderType
         let { customers, ...newOrder } = order;
         return (newOrder);
     };
-    const editOrderAction = (id: number) => {
+    const editOrderAction = (id: number): void => {
         if (id === 0) {
             setNewOrder(newOrderDefault);
             setCurrentOrderId(0);
@@ -54,14 +51,14 @@ export default function OrdersGrid() {
         }
         setOpenEditModal(true);
     };
-    const copyOrderAction = (id: number) => {
+    const copyOrderAction = (id: number): void => {
         editmodeText = 'copy mode';
         const order = orders.find(x => x.id === id) as OrderFullType;
         setNewOrder({ ...(fullOrderToOrder(order)), 'id': 0 });
         setCurrentCustomerId(order.customer_id);
         setOpenEditModal(true);
     };
-    const deleteOrderAction = (id: number) => {
+    const deleteOrderAction = (id: number): void => {
         setShowYesCancelDialog(true);
         setCurrentOrderId(id);
         setTimeout(refreshOrders, 300);
@@ -90,7 +87,7 @@ export default function OrdersGrid() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentOrderId, yesCancel]);
 
-    function getCustomer(params: any) {
+    function getCustomer(params: GridValueGetterParams<any, any>) {
         return `${params.row.customers?.name || ''}`;
     };
     const prodColumns: GridColDef[] = [
@@ -181,7 +178,3 @@ export default function OrdersGrid() {
         </div>
     );
 }
-function ordersProductsFullQuery(ordersProductsFullQuery: any): OrderProductsFullType[] {
-    throw new Error('Function not implemented.');
-}
-

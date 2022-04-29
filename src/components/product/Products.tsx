@@ -19,7 +19,6 @@ const Products: React.FC = () => {
 
     const products = useRecoilValue(productsFullQuery) as ProductFullType[];
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
-    // const productToOpen = useRecoilValue(productQuery(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));

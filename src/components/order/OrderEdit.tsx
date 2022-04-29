@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { currentOrderIdState, newOrderState, orderProductsFullQuery, orderQuery, ordersFullQuery } from './data/orderState';
 import { deleteOrderProducts, postNewOrder, postOrderProducts, putUpdatedOrder } from './data/orderDao';
 import { currentCustomerIdState } from '../customer/data/customerState';
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const OrderEdit: React.FC<Props> = ({ modalState,
-    setFromParrent, editmodeText, outerEditContext }) => {
+    setFromParrent, editmodeText, outerEditContext }): JSX.Element => {
     const [currentOrderId, setCurrentOrderId] = useRecoilState(currentOrderIdState(outerEditContext));
     const localEditContext = 'Order.' + currentOrderId;
     const isInitialMount = useRef(true);
@@ -35,7 +35,7 @@ export const OrderEdit: React.FC<Props> = ({ modalState,
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
     const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
 
-    const handleClose = () => {
+    const handleClose = (): void => {
         if (isModified) {
             setShowYesNoCancelDialog(true);
         } else {
@@ -43,8 +43,7 @@ export const OrderEdit: React.FC<Props> = ({ modalState,
         }
     };
 
-    const updateOrder = async () => {
-        // debugger;
+    const updateOrder = async (): Promise<void> => {
         if (newOrder.id === 0) {
             let newOrderId = await postNewOrder(newOrder);
             setCurrentOrderId(newOrderId);
@@ -107,7 +106,3 @@ export const OrderEdit: React.FC<Props> = ({ modalState,
 }
 
 export default OrderEdit;
-
-function orderProductsFullQueryEdit(outerEditContext: string): import("recoil").RecoilState<unknown> {
-    throw new Error('Function not implemented.');
-}
