@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { currentCustCategIdState, custCategQuery, custCategsQuery, 
+import { currentCustCategIdState, custCategsQuery, 
     newCustCategDefault, newCustCategState, 
     openEditModalCustCategState } from './data/customerCategState';
 import { openCustCategSelectorState } from './data/customerCategState';
@@ -21,8 +21,7 @@ export const CustCategSelector: React.FC<Props> = ({editContext, enableDruggable
     const setEditCustomerCategId = useSetRecoilState(currentCustCategIdState('CustCategSelector'));
 
     const [openEditModalCustomerCateg, setOpenEditModalCustomerCateg] = useRecoilState(openEditModalCustCategState);
-    let customerCategToEdit = useRecoilValue(custCategQuery('CustCategSelector'));
-    const [newCustomerCateg, setNewCustomerCateg] = useRecoilState(newCustCategState);
+    const setNewCustomerCateg = useSetRecoilState(newCustCategState);
 
 
     const openSelector = openCustomerCategSelector;

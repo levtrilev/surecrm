@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
-import { handleMenuItemClick, pages, settings } from './navFunctions';
+import { handleMenuItemClick, handleSettingsMenuItemClick, pages, settings } from './navFunctions';
 import { dbRole } from '../appConsts';
 
 const HeaderMUI = () => {
@@ -110,7 +110,7 @@ const HeaderMUI = () => {
                 // onClick={handleCloseNavMenu}
                 onClick={(event) => {
                   handleCloseNavMenu();
-                  handleMenuItemClick(navigate, event, index)
+                  handleMenuItemClick(navigate, event, index);
                 }
                 }
                 sx={{ my: 2, color: 'white', display: 'block' }}
@@ -142,8 +142,15 @@ const HeaderMUI = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseNavMenu}>
+              {settings.map((setting, index) => (
+                <MenuItem
+                  key={setting}
+                  onClick={(event) => {
+                    handleCloseUserMenu();
+                    handleSettingsMenuItemClick(navigate, event, index);
+                  }
+                  }
+                >
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

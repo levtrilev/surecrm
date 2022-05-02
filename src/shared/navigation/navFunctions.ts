@@ -33,6 +33,29 @@ export const navSvgIcons = [
   DraftsIcon,
 ];
 
+export const handleSettingsMenuItemClick = (
+  navigate: NavigateFunction,
+  event: React.MouseEvent<HTMLElement>,
+  index: number
+) => {
+  switch (index) {
+    case 0:
+      navigate("/users", { replace: true });
+      break;
+    case 1:
+      navigate("/tenants", { replace: true });
+      break;
+    case 2:
+      navigate("/sections", { replace: true });
+      break;
+    case 3:
+      navigate("/roles", { replace: true });
+      break;
+    default:
+      navigate("/", { replace: true });
+  }
+};
+
 export const handleMenuItemClick = (
   navigate: NavigateFunction,
   event: React.MouseEvent<HTMLElement>,

@@ -91,7 +91,7 @@ export const CustomerEditForm: React.FC<Props> = ({ customer, updateCustomer,
                             <Grid item xs={4}>
                                 <TextField id="customer-category" label="Category"
                                     onClick={() => { setOpenCustomerCategSelector(true); refreshCustomerCateg(); }}
-                                    value={currentCustomerCateg.name} />
+                                    value={currentCustomerCateg ? currentCustomerCateg.name : "not selected"} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>

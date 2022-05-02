@@ -1,10 +1,10 @@
 import { DOMAIN, TOKEN } from "../../../shared/appConsts";
-const ENDPOINT = "view_customer_categories";
+const ENDPOINT = "sections";
 
-export async function postNewCustomerCateg(
-  newCustomerCateg: CustomerCategoryType
+export async function postNewSection(
+  newSection: SectionType
 ): Promise<number> {
-  let { id, ...customerCateg } = newCustomerCateg;
+  let { id, ...section } = newSection;
   const requestOptions = {
     method: "POST",
     headers: {
@@ -12,17 +12,17 @@ export async function postNewCustomerCateg(
       'Prefer': 'return=representation',
       Authorization: "Bearer " + TOKEN,
     },
-    body: JSON.stringify([{ ...customerCateg }]),
+    body: JSON.stringify([{ ...section }]),
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
   console.log(response.status);
   let location = response.headers.get('Location');
-  let newСustomerCategId = location !== null ? location.split("eq.").pop() : "0";
-  return newСustomerCategId !== undefined ? +newСustomerCategId : 0;
+  let newSectionId = location !== null ? location.split("eq.").pop() : "0";
+  return newSectionId !== undefined ? +newSectionId : 0;
 }
 
-export async function putUpdatedCustomerCateg(
-  customerCateg: CustomerCategoryType
+export async function putUpdatedSection(
+  section: SectionType
 ): Promise<void> {
   const requestOptions = {
     method: "PUT",
@@ -30,16 +30,16 @@ export async function putUpdatedCustomerCateg(
       "Content-Type": "application/json",
       Authorization: "Bearer " + TOKEN,
     },
-    body: JSON.stringify([{ ...customerCateg }]),
+    body: JSON.stringify([{ ...section }]),
   };
   const response = await fetch(
-    `${DOMAIN}/${ENDPOINT}?id=eq.${customerCateg.id}`,
+    `${DOMAIN}/${ENDPOINT}?id=eq.${section.id}`,
     requestOptions
   );
   console.log(response.status);
 }
 
-export async function deleteCustomerCateg(id: number): Promise<void> {
+export async function deleteSection(id: number): Promise<void> {
   const requestOptions = {
     method: "DELETE",
     headers: {
@@ -54,7 +54,7 @@ export async function deleteCustomerCateg(id: number): Promise<void> {
   console.log(response.status, response.url);
 }
 
-export const custCategsQueryDao = async (): Promise<CustomerCategoryType[]> => {
+export const sectionsQueryDao = async (): Promise<TenantType[]> => {
   const requestOptions = {
     method: "GET",
     headers: {
@@ -63,14 +63,14 @@ export const custCategsQueryDao = async (): Promise<CustomerCategoryType[]> => {
     },
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
-  const categories = await response.json();
+  const sections = await response.json();
   if (response.status !== 200) {
     console.log(`Bad HTTP request status ${response.status}`);
   }
-  return categories;
+  return sections;
 };
 
-export const custCategQueryDao = async (id: number): Promise<CustomerCategoryType|null> => {
+export const sectionQueryDao = async (id: number): Promise<SectionType|null> => {
   const requestOptions = {
     method: "GET",
     headers: {
@@ -82,14 +82,30 @@ export const custCategQueryDao = async (id: number): Promise<CustomerCategoryTyp
     `${DOMAIN}/${ENDPOINT}?id=eq.${id}`,
     requestOptions
   );
-  const customer_category = await response.json();
+  const section = await response.json();
   if (response.status !== 200) {
     console.log(`Bad HTTP request status ${response.status}`);
   }
-  if (customer_category.length === 1) {
-    return customer_category[0];
+  if (section.length === 1) {
+    return section[0];
   } else {
-    console.log("if (customer_category.length === 1)", "false");
+    console.log("if (tenant.length === 1)", "false");
     return null;
   }
+};
+
+export const sectionsFullQueryDao = async (): Promise<SectionFullType[]> => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+  };
+  const response = await fetch(
+    `${DOMAIN}/${ENDPOINT}?select=*,tenants:tenants!sections_tenant_id_fkey(id,name,blocked)`,
+    requestOptions
+  );
+  const sections = await response.json();
+  if (response.status !== 200) {
+    console.log(`Bad HTTP request status ${response.status}`);
+  }
+  return sections;
 };

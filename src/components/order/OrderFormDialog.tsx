@@ -130,7 +130,7 @@ export const OrderFormDialog: React.FC<Props> = ({ updateOrder,
                     <Grid item xs={6}>
                         <TextField id="customer" label="Покупатель(выберите)"
                             onClick={clickOpenCustomerSelector} fullWidth
-                            value={currentCustomer.name} size="small" margin="dense" />
+                            value={currentCustomer ? currentCustomer.name: "not selected"} size="small" margin="dense" />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField id="order-customer-id" label="ID"

@@ -11,8 +11,8 @@ export const newOrderDefault: OrderType = {
   total_amount: 0,
   deleted: false,
   description: "",
-  section_id: tenantId,
-  tenant_id: sectionId,
+  section_id: sectionId,
+  tenant_id: tenantId,
 };
 
 export const newOrderProductsDefault: OrderProductsType = {
@@ -27,8 +27,8 @@ export const newOrderProductsDefault: OrderProductsType = {
   line_total_vat: 0,
   weight: 0,
   volume: 0,
-  section_id: tenantId,
-  tenant_id: sectionId,
+  section_id: sectionId,
+  tenant_id: tenantId,
 };
 
 export const newOrderState = atom({
@@ -76,10 +76,10 @@ export const orderProductsQuery = selectorFamily({
   },
 });
 
-const orderProductsFullQueryEdit = atomFamily({
-  key: 'orderProductsFullQueryAtom',
-  default: [] as any[],
-});
+// const orderProductsFullQueryEdit = atomFamily({
+//   key: 'orderProductsFullQueryAtom',
+//   default: [] as any[],
+// });
 
 export const orderProductsFullQuery = selectorFamily({
   key: "orderProductsFullQuery",
@@ -88,8 +88,4 @@ export const orderProductsFullQuery = selectorFamily({
     return orderProductsFullQueryDao(id);
   },  
 });
-// export const orderProductsFullQueryEdit = selectorFamily({
-//   key: "orderProductsFullQueryEdit",
-//   get: (editContext: string) => ({ get }) => get(orderProductsFullQuery(editContext)),
-//   set: (editContext: string) => ({ set }, newValue) => set(orderProductsFullQueryAtom(editContext), newValue),
-// });
+

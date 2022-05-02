@@ -1,7 +1,7 @@
 import { DOMAIN, TOKEN } from "../../../shared/appConsts";
 const ENDPOINT = 'view_product_categories';
 
-export async function postNewProdCateg(newProdCateg: ProductCategoryType) {
+export async function postNewProdCateg(newProdCateg: ProductCategoryType): Promise<number> {
     let { id, ...prodCateg } = newProdCateg;
     const requestOptions = {
         method: 'POST',
@@ -15,8 +15,7 @@ export async function postNewProdCateg(newProdCateg: ProductCategoryType) {
     return newProdCategId !== undefined ? +newProdCategId : 0;
 }
 
-export async function putUpdatedProdCateg(prodCateg: ProductCategoryType) {
-
+export async function putUpdatedProdCateg(prodCateg: ProductCategoryType): Promise<void> {
     const requestOptions = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
@@ -26,7 +25,7 @@ export async function putUpdatedProdCateg(prodCateg: ProductCategoryType) {
     console.log(response.status);
 }
 
-export async function deleteProdCateg(id: number) {
+export async function deleteProdCateg(id: number): Promise<void> {
     const requestOptions = {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
@@ -35,7 +34,7 @@ export async function deleteProdCateg(id: number) {
     console.log(response.status, response.url);
 }
 
-export const prodCategsQueryDao = async () => {
+export const prodCategsQueryDao = async (): Promise<ProductCategoryType[]> => {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
@@ -50,7 +49,7 @@ export const prodCategsQueryDao = async () => {
       return categories;
 };
 
-export const prodCategQueryDao = async (id: number) => {
+export const prodCategQueryDao = async (id: number): Promise<ProductCategoryType|null> => {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },

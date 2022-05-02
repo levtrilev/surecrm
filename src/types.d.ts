@@ -1,16 +1,5 @@
-type PostsType = PostType[] | null;
-  
-interface Action {
-  type: string;
-  payload: PostType[] | null;
-}
-
-interface PostType {
-  title: string;
-  userId: number;
-  body: string;
-  id: number;
-}
+type HandleOpenModal = () => void;
+type SetOpenModal = (boolean) => void;
 
 interface ProductType {
   id: number;
@@ -132,9 +121,75 @@ interface CustomerCategoryType {
   tenant_id: number;
 }
 
-type counter_one = number;
-type counter_two = number;
-type counter_three = number | null;
+interface UserType {
+  id: number;
+  name: string;
+  blocked: boolean;
+  user_login: string;
+  tenant_id: number;
+}
+interface UserFullType {
+  id: number;
+  name: string;
+  blocked: boolean;
+  user_login: string;
+  tenant_id: number;
+  tenants: TenantType;
+}
+
+interface TenantType {
+  id: number;
+  name: string;
+  blocked: boolean;
+}
+
+interface SectionType {
+  id: number;
+  name: string;
+  blocked: boolean;
+  tenant_id: number;
+}
+interface SectionFullType {
+  id: number;
+  name: string;
+  blocked: boolean;
+  tenant_id: number;
+  tenants: TenantType;
+}
+
+interface RoleType {
+  id: number;
+  name: string;
+  blocked: boolean;
+  description: string;
+  tenant_id: number;
+}
+interface RoleFullType {
+  id: number;
+  name: string;
+  blocked: boolean;
+  description: string;
+  tenant_id: number;
+  tenants: TenantType;
+}
+
+interface RoleUsersType {
+  id: number;
+  role_id: number;
+  user_id: number;
+  tenant_id: number;
+}
+interface RoleUsersFullType {
+  id: number;
+  role_id: number;
+  user_id: number;
+  tenant_id: number;
+  users: UserType;
+}
+
+// type counter_one = number;
+// type counter_two = number;
+// type counter_three = number | null;
 
 interface DocDataType { 
   id: number;
@@ -143,5 +198,16 @@ interface DocDataType {
   age: number;
 }
 
-type HandleOpenModal = () => void;
-type SetOpenModal = (boolean) => void;
+type PostsType = PostType[] | null;
+  
+interface Action {
+  type: string;
+  payload: PostType[] | null;
+}
+
+interface PostType {
+  title: string;
+  userId: number;
+  body: string;
+  id: number;
+}

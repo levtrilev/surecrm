@@ -1,3 +1,4 @@
+// это пока загрлушка
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
@@ -10,53 +11,47 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
-import {
-    currentProdCategIdState, prodCategsQuery,
-    newProdCategDefault, newProdCategState
-} from './data/prodCategState';
-import { deleteProdCateg } from './data/prodCategDao';
-import ProdCategEdit from './ProdCategEdit';
+import { currentTenantIdState, tenantsQuery, newTenantDefault, newTenantState } from './data/tenantState';
+import { deleteTenant } from './data/tenantDao';
+import TenantEdit from './TenantEdit';
 
 let editmodeText = '';
-let editContext = 'ProdCategGrid';
+let editContext = 'TenantGrid';
 
-export default function ProdCategGrid() {
+export default function TenantsGrid() {
 
-    const prodCategs = useRecoilValue(prodCategsQuery) as ProductCategoryType[];
-    const refreshProdCategs = useRecoilRefresher_UNSTABLE(prodCategsQuery);
+    const tenants = useRecoilValue(tenantsQuery);
+    const refreshTenants = useRecoilRefresher_UNSTABLE(tenantsQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
-    const [currentProdCategId, setCurrentProdCategId] = useRecoilState(currentProdCategIdState(editContext));
-    // let prodCategToOpen = useRecoilValue(prodCategQuery(editContext));
-    const setNewProdCateg = useSetRecoilState(newProdCategState);
+    const [currentTenantId, setCurrentTenantId] = useRecoilState(currentTenantIdState(editContext));
+    const setNewTenant = useSetRecoilState(newTenantState);
 
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
-    // const newProdCateg = useRecoilValue(newProdCategState);
 
-    const editProdCategAction = (id: number) => {
+    const editTenantAction = (id: number) => {
         if (id === 0) {
-            setNewProdCateg(newProdCategDefault);
-            setCurrentProdCategId(0);
-            editmodeText = 'создание нового';
+            setNewTenant(newTenantDefault);
+            setCurrentTenantId(0);
+            editmodeText = 'create new mode';
         } else {
-            editmodeText = 'редактирование';
-            setCurrentProdCategId(id);
-            const prodCateg = prodCategs.find(x => x.id === id) as ProductCategoryType;
-            setNewProdCateg(prodCateg);
+            editmodeText = 'edit mode';
+            setCurrentTenantId(id);
+            const tenant = tenants.find(x => x.id === id) as TenantType;
+            setNewTenant(tenant);
         }
         setOpenEditModal(true);
     };
-
-    const copyProdCategAction = (id: number) => {
-        editmodeText = 'копирование';
-        const prodCateg = prodCategs.find(x => x.id === id) as ProductCategoryType;
-        setNewProdCateg({ ...prodCateg, 'id': 0 });
+    const copyTenantAction = (id: number) => {
+        editmodeText = 'copy mode';
+        const tenant = tenants.find(x => x.id === id) as TenantType;
+        setNewTenant({ ...tenant, 'id': 0 });
         setOpenEditModal(true);
     };
-    const deleteProdCategAction = (id: number) => {
+    const deleteTenantAction = (id: number) => {
         setShowYesCancelDialog(true);
-        setCurrentProdCategId(id);
-        setTimeout(refreshProdCategs, 300);
+        setCurrentTenantId(id);
+        setTimeout(refreshTenants, 300);
     };
 
     const prodColumns: GridColDef[] = [
@@ -70,7 +65,7 @@ export default function ProdCategGrid() {
         },
         {
             field: 'name',
-            headerName: 'Категория',
+            headerName: 'Tenant',
             width: 300,
             editable: false,
         },
@@ -81,13 +76,13 @@ export default function ProdCategGrid() {
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
                 <strong>
-                    <IconButton size="medium" onClick={() => editProdCategAction(params.id as number)}>
+                    <IconButton size="medium" onClick={() => editTenantAction(params.id as number)}>
                         <EditIcon />
                     </IconButton>
-                    <IconButton size="medium" onClick={() => deleteProdCategAction(params.id as number)}>
+                    <IconButton size="medium" onClick={() => deleteTenantAction(params.id as number)}>
                         <DeleteOutline />
                     </IconButton>
-                    <IconButton size="medium" onClick={() => copyProdCategAction(params.id as number)}>
+                    <IconButton size="medium" onClick={() => copyTenantAction(params.id as number)}>
                         <ContentCopyIcon />
                     </IconButton>
                 </strong>
@@ -99,45 +94,46 @@ export default function ProdCategGrid() {
 
     useEffect(() => {
         if (yesCancel) {
-            deleteProdCateg(currentProdCategId);
-            setTimeout(refreshProdCategs, 300);
+            deleteTenant(currentTenantId);
+            setTimeout(refreshTenants, 300);
             setYesCancel(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentProdCategId, yesCancel]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentTenantId, yesCancel]);
 
     return (
         <>
             <div style={{ height: 630, width: "99%", margin: "50px 4px 4px 4px" }}>
                 <TopDocsButtons
                     id={0}
-                    refreshAction={refreshProdCategs}
+                    refreshAction={refreshTenants}
                     deleteAction={() => { }}
-                    createNewAction={() => editProdCategAction(0)}
+                    createNewAction={() => editTenantAction(0)}
                     copyAction={() => { }}
                 />
                 <DataGrid rowHeight={32}
                     // rows={[...products, { id: 100, name: 'Snow', blocked: true }]}
-                    rows={prodCategs}
+                    rows={tenants}
                     columns={prodColumns}
                     pageSize={16}
                     rowsPerPageOptions={[16]}
                     checkboxSelection
                     disableSelectionOnClick
-                    onRowClick={(params, event, details) => { }}
+                    onRowClick={(params, event, details) => {}}
                 />
                 {showYesCancelDialog ? <YesCancelDialog
-                    questionToConfirm={`Delete category (id = ${currentProdCategId}) ?`}
+                    questionToConfirm={`Delete tenant (id = ${currentTenantId}) ?`}
                     modalState={showYesCancelDialog}
                     setFromParrent={setShowYesCancelDialog}
                     editContext={editContext}
                 /> : <></>}
-                {openEditModal ? <ProdCategEdit
+                {openEditModal ? <TenantEdit
                     modalState={openEditModal}
                     setFromParrent={setOpenEditModal}
                     editmodeText={editmodeText}
                     outerEditContext={editContext}
                 /> : <></>}
+
             </div>
         </>
     );

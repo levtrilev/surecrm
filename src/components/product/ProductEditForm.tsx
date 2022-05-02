@@ -95,13 +95,13 @@ export const ProductEditForm: React.FC<Props> = ({ product, updateProduct,
                             </Grid>
                             <Grid item xs={4}>
                                 <TextField id="product-category-id" label="Category ID (select)"
-                                    onClick={() => setOpenProdCategSelector(true)}
+                                    onClick={() => {setOpenProdCategSelector(true); refreshProdCateg()}}
                                     value={newProduct.category_id} />
                             </Grid>
                             <Grid item xs={4}>
                                 <TextField id="product-category" label="Category"
-                                    onClick={() => setOpenProdCategSelector(true)}
-                                    value={currentProdCateg.name} />
+                                    onClick={() => {setOpenProdCategSelector(true); refreshProdCateg()}}
+                                    value={currentProdCateg ? currentProdCateg.name : "not selected"} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>

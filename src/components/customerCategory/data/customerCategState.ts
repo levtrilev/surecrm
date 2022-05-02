@@ -6,8 +6,8 @@ export const newCustCategDefault: CustomerCategoryType =
 {
   id: 0,
   name: '',
-  section_id: tenantId,
-  tenant_id: sectionId,
+  section_id: sectionId,
+  tenant_id: tenantId,
 };
 export const newCustCategState = atom({
   key: "newCustCategState",

@@ -7,60 +7,59 @@ import { IconButton } from '@mui/material';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { CustomerEdit } from './CustomerEdit';
+import { RoleEdit } from './RoleEdit';
 import YesCancelDialog from '../../shared/YesCancelDialog';
-import { deleteCustomer } from './data/customerDao';
-import { currentCustomerIdState, newCustomerDefault, newCustomerState, customersFullQuery } from './data/customerState'
+import { deleteRole } from './data/roleDao';
+import { currentRoleIdState, newRoleDefault, newRoleState, rolesFullQuery } from './data/roleState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
-import { currentCustCategIdState } from '../customerCategory/data/customerCategState';
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
+import { currentTenantIdState } from '../tenant/data/tenantState';
 
 let editmodeText = '';
-const editContext = 'CustomersGrid';
+let editContext = 'RolesGrid';
 
-export default function CustomersGrid(): JSX.Element {
+export default function RolesGrid(): JSX.Element {
 
-    const customers = useRecoilValue(customersFullQuery);
-    const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
+    const roles = useRecoilValue(rolesFullQuery);
+    const refreshRoles = useRecoilRefresher_UNSTABLE(rolesFullQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
-    const [currentCustomerId, setCurrentCustomerId] = useRecoilState(currentCustomerIdState(editContext));
+    const currentRoleId = useRecoilValue(currentRoleIdState(editContext));
     const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState(editContext));
-    const setNewCustomer = useSetRecoilState(newCustomerState);
-    const setCurrentCustomerCategId = useSetRecoilState(currentCustCategIdState(editContext));
+    const setCurrentRoleId = useSetRecoilState(currentRoleIdState(editContext));
+    const setNewRole = useSetRecoilState(newRoleState);
+    const setCurrentTenantId = useSetRecoilState(currentTenantIdState(editContext));
     const [openEditModal, setOpenEditModal] = useRecoilState(openEditModalState);
 
-    const fullCustomerToCustomer = (customer: CustomerFullType): CustomerType => {
-        // removes customer_categories
-        // to transform customerFullType to customerType
-        let { customer_categories, ...newCustomer } = customer;
-        return (newCustomer);
+    const fullRoleToRole = (role: RoleFullType): RoleType => {
+        let { tenants, ...newRole } = role;
+        return (newRole);
     };
-    const editCustomerAction = (id: number): void => {
+    const editRoleAction = (id: number): void => {
         if (id === 0) {
-            setNewCustomer(newCustomerDefault);
-            setCurrentCustomerId(0);
-            setCurrentCustomerCategId(0);
-            editmodeText = 'создание нового';
+            setNewRole(newRoleDefault);
+            setCurrentRoleId(0);
+            setCurrentTenantId(0);
+            editmodeText = 'create new mode';
         } else {
-            editmodeText = 'редактирование';
-            setCurrentCustomerId(id);
-            const customer = customers.find(x => x.id === id) as CustomerFullType;
-            setCurrentCustomerCategId(customer.category_id);
-            setNewCustomer(fullCustomerToCustomer(customer as CustomerFullType));
+            editmodeText = 'edit mode';
+            setCurrentRoleId(id);
+            const role = roles.find(x => x.id === id) as RoleFullType;
+            setNewRole(fullRoleToRole(role));
+            setCurrentTenantId(role.tenant_id);
         }
         setOpenEditModal(true);
     };
-    const copyCustomerAction = (id: number): void => {
-        editmodeText = 'копирование';
-        const customer = customers.find(x => x.id === id) as CustomerFullType;
-        setNewCustomer({ ...(fullCustomerToCustomer(customer)), 'id': 0 });
-        setCurrentCustomerCategId(customer.category_id);
+    const copyRoleAction = (id: number): void => {
+        editmodeText = 'copy mode';
+        const role = roles.find(x => x.id === id) as RoleFullType;
+        setNewRole({ ...(fullRoleToRole(role)), 'id': 0 });
+        setCurrentTenantId(role.tenant_id);
         setOpenEditModal(true);
     };
-    const deleteCustomerAction = (id: number): void => {
+    const deleteRoleAction = (id: number): void => {
         setShowYesCancelDialog(true);
-        setCurrentCustomerId(id);
-        setTimeout(refreshCustomers, 300);
+        setCurrentRoleId(id);
+        setTimeout(refreshRoles, 300);
     };
 
     // const [docData, setDocData] = React.useState({ id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 } as DocDataType);
@@ -79,17 +78,17 @@ export default function CustomersGrid(): JSX.Element {
 
     useEffect(() => {
         if (yesCancel) {
-            deleteCustomer(currentCustomerId);
-            setTimeout(refreshCustomers, 300);
+            deleteRole(currentRoleId);
+            setTimeout(refreshRoles, 300);
             setYesCancel(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentCustomerId, yesCancel]);
+    }, [currentRoleId, yesCancel]);
 
-    function getCategory(params: GridValueGetterParams<any, any>): string {
-        return `${params.row.customer_categories?.name || ''}`;
+    function getTenant(params: GridValueGetterParams<any, any>) {
+        return `${params.row.tenants?.name || ''}`;
     };
-    const customerColumns: GridColDef[] = [
+    const prodColumns: GridColDef[] = [
         {
             field: 'id', headerName: 'ID', width: 60,
             renderCell: (params: GridRenderCellParams<number>) => (
@@ -100,22 +99,28 @@ export default function CustomersGrid(): JSX.Element {
         },
         {
             field: 'name',
-            headerName: 'Покупатель',
+            headerName: 'Роль',
+            width: 120,
+            editable: false,
+        },
+        {
+            field: 'description',
+            headerName: 'Описание',
             width: 300,
             editable: false,
         },
         {
-            field: 'category',
+            field: 'Tenant',
             type: 'string',
-            headerName: 'Категория',
+            headerName: 'Tenant',
             width: 120,
             editable: false,
-            valueGetter: getCategory,
+            valueGetter: getTenant,
         },
         {
             field: 'blocked',
             type: 'boolean',
-            headerName: 'Заблокирован',
+            headerName: 'Заблокирована',
             width: 90,
             editable: false,
         },
@@ -126,13 +131,13 @@ export default function CustomersGrid(): JSX.Element {
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
                 <strong>
-                    <IconButton size="medium" onClick={() => editCustomerAction(params.id as number)}>
+                    <IconButton size="medium" onClick={() => editRoleAction(params.id as number)}>
                         <EditIcon />
                     </IconButton>
-                    <IconButton size="medium" onClick={() => deleteCustomerAction(params.id as number)}>
+                    <IconButton size="medium" onClick={() => deleteRoleAction(params.id as number)}>
                         <DeleteOutline />
                     </IconButton>
-                    <IconButton size="medium" onClick={() => copyCustomerAction(params.id as number)}>
+                    <IconButton size="medium" onClick={() => copyRoleAction(params.id as number)}>
                         <ContentCopyIcon />
                     </IconButton>
                 </strong>
@@ -144,30 +149,29 @@ export default function CustomersGrid(): JSX.Element {
         <div style={{ height: 630, width: "99%", margin: "50px 4px 4px 4px" }}>
             <TopDocsButtons
                 id={0}
-                refreshAction={refreshCustomers}
+                refreshAction={refreshRoles}
                 deleteAction={() => { }}
-                createNewAction={() => editCustomerAction(0)}
+                createNewAction={() => editRoleAction(0)}
                 copyAction={() => { }}
             />
             <DataGrid rowHeight={32}
                 // rows={[...products, { id: 100, name: 'Snow', blocked: true }]}
-                rows={customers}
-                columns={customerColumns}
+                rows={roles}
+                columns={prodColumns}
                 pageSize={16}
                 rowsPerPageOptions={[16]}
                 checkboxSelection
                 disableSelectionOnClick
                 onRowClick={(params, event, details) => openDocument(params, event, details)}
             />
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete product (id = ${currentCustomerId}) ?`}
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Удалить роль (id = ${currentRoleId}) ?`}
                 modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
-            {openEditModal ? <CustomerEdit
+            {openEditModal ? <RoleEdit
                 modalState={openEditModal}
                 setFromParrent={setOpenEditModal}
                 editmodeText={editmodeText}
                 outerEditContext={editContext}
             /> : <></>}
-
         </div>
     );
 }

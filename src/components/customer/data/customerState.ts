@@ -11,8 +11,8 @@ export const newCustomerDefault: CustomerType = {
   name: "",
   blocked: false,
   category_id: 0,
-  section_id: tenantId,
-  tenant_id: sectionId,
+  section_id: sectionId,
+  tenant_id: tenantId,
 };
 
 export const newCustomerState = atom({
@@ -36,7 +36,6 @@ export const customersQuery = selector({
     return customersQueryDao();
   },
 });
-
 
 export const customersFullQuery = selector({
   key: "customersFullQuery",

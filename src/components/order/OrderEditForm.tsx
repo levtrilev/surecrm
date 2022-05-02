@@ -85,7 +85,7 @@ export const OrderEditForm: React.FC<Props> = ({ order, updateOrder,
                             <Grid item xs={4}>
                                 <TextField id="customer" label="Customer"
                                     onClick={() => { setOpenCustomerSelector(true); refreshCustomer(); }}
-                                    value={currentCustomer.name} />
+                                    value={currentCustomer ? currentCustomer.name : "not selected"} />
                             </Grid>
                         </Grid>
                         <Grid container item spacing={3}>

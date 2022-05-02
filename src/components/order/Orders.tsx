@@ -4,7 +4,7 @@ import {
     useRecoilValue,
     useRecoilRefresher_UNSTABLE,
 } from 'recoil';
-import { currentOrderIdState, orderQuery, ordersFullQuery } from './data/orderState'
+import { currentOrderIdState, ordersFullQuery } from './data/orderState'
 import { Box, Container, Grid } from '@mui/material';
 import { deleteOrder } from './data/orderDao';
 import Order from './Order';
@@ -20,7 +20,7 @@ const Orders: React.FC = () => {
     // const [newOrder, setNewOrder] = useRecoilState(newOrderState);
     const orders = useRecoilValue(ordersFullQuery) as OrderFullType[];
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
-    const orderToOpen = useRecoilValue(orderQuery(editContext));
+    // const orderToOpen = useRecoilValue(orderQuery(editContext));
     const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
 
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
@@ -74,7 +74,7 @@ const Orders: React.FC = () => {
                 editmodeText={'edit mode'}
                 outerEditContext={editContext}
             /> : <></>}
-            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Order (id = ${orderToOpen.id}) ?`} 
+            {showYesCancelDialog ? <YesCancelDialog questionToConfirm={`Delete Order (id = ${currentOrderId}) ?`} 
             modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={editContext} /> : <></>}
         </div>
     )

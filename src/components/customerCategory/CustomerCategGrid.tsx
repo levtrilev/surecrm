@@ -11,7 +11,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import TopDocsButtons from '../../shared/navigation/TopDocsButtons';
-import { currentCustCategIdState, custCategQuery, custCategsQuery, newCustCategDefault, newCustCategState } from './data/customerCategState';
+import { currentCustCategIdState, custCategsQuery, newCustCategDefault, newCustCategState } from './data/customerCategState';
 import { deleteCustomerCateg } from './data/customerCategDao';
 import CustomerCategEdit from './CustomerCategEdit';
 

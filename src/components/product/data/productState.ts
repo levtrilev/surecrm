@@ -16,8 +16,8 @@ export const newProductDefault: ProductType = {
   base_price: 0,
   vat: 0,
   description: "",
-  section_id: tenantId,
-  tenant_id: sectionId,
+  section_id: sectionId,
+  tenant_id: tenantId,
 };
 export const newProductState = atom({
   key: "newProductState",

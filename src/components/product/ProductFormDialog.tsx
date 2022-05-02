@@ -148,7 +148,7 @@ export const ProductFormDialog: React.FC<Props> = ({ updateProduct,
                         <Grid item xs={4}>
                             <TextField id="product-category" label="Категория (выберите)"
                                 onClick={clickOpenProdCategSelector}
-                                value={currentProdCateg.name} />
+                                value={currentProdCateg ? currentProdCateg.name: "not selected"} />
                         </Grid>
                         <Grid item xs={4}>
                             <TextField id="product-category-id" label="ID Категории"
