@@ -107,7 +107,7 @@ export default function OrdersGrid(): JSX.Element {
         },
                 {
             field: 'description',
-            headerName: 'Описание',
+            headerName: 'Описание заказа',
             width: 300,
             editable: false,
         },

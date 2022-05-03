@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { currentOrderIdState, newOrderState, orderProductsFullQuery, orderQuery, ordersFullQuery } from './data/orderState';
+import { currentOrderIdState, isModifiedOrderProductsState, newOrderState, orderProductsFullQuery, orderQuery, ordersFullQuery } from './data/orderState';
 import { deleteOrderProducts, postNewOrder, postOrderProducts, putUpdatedOrder } from './data/orderDao';
 import { currentCustomerIdState } from '../customer/data/customerState';
 import { useEffect, useRef } from 'react';
@@ -23,6 +23,7 @@ export const OrderEdit: React.FC<Props> = ({ modalState,
 
     const orderProducts = useRecoilValue(orderProductsFullQuery(outerEditContext)) as OrderProductsFullType[];
     const orderProductsEditRef = useRef([...orderProducts]);
+    const isModifiedOrderProducts = useRecoilValue(isModifiedOrderProductsState(outerEditContext));
 
     const refreshOrders = useRecoilRefresher_UNSTABLE(ordersFullQuery);
     const refreshOrder = useRecoilRefresher_UNSTABLE(orderQuery(outerEditContext));
@@ -48,15 +49,19 @@ export const OrderEdit: React.FC<Props> = ({ modalState,
             let newOrderId = await postNewOrder(newOrder);
             setCurrentOrderId(newOrderId);
             setNewOrder({ ...newOrder, id: newOrderId });
-            if (orderProductsEditRef.current.length > 0) {
+            
+            if (isModifiedOrderProducts &&
+                orderProductsEditRef.current.length > 0) {
                 const tmp = orderProductsEditRef.current as OrderProductsFullType[];
                 orderProductsEditRef.current = tmp.map((el) => { return { ...el, order_id: newOrderId }; });
                 postOrderProducts(orderProductsEditRef.current);
             }
         } else {
             await putUpdatedOrder(newOrder);
-            await deleteOrderProducts(newOrder.id);
-            await postOrderProducts(orderProductsEditRef.current);
+            if (isModifiedOrderProducts) {
+                await deleteOrderProducts(newOrder.id);
+                await postOrderProducts(orderProductsEditRef.current);
+            }
         }
         setIsModified(false);
         setTimeout(refreshOrders, 300);

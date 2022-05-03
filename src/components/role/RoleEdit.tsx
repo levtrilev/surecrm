@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
-import { currentRoleIdState, newRoleState, roleUsersFullQuery, roleQuery, rolesFullQuery } from './data/roleState';
+import { currentRoleIdState, newRoleState, roleUsersFullQuery, roleQuery, rolesFullQuery, isModifiedRoleUsersState } from './data/roleState';
 import { deleteRoleUsers, postNewRole, postRoleUsers, putUpdatedRole } from './data/roleDao';
 import { currentTenantIdState } from '../tenant/data/tenantState';
 import { useEffect, useRef } from 'react';
@@ -23,6 +23,7 @@ export const RoleEdit: React.FC<Props> = ({ modalState,
 
     const roleUsers = useRecoilValue(roleUsersFullQuery(outerEditContext));
     const roleUsersEditRef = useRef([...roleUsers]);
+    const isModifiedRoleUsers = useRecoilValue(isModifiedRoleUsersState(outerEditContext));
 
     const refreshRoles = useRecoilRefresher_UNSTABLE(rolesFullQuery);
     const refreshRole = useRecoilRefresher_UNSTABLE(roleQuery(outerEditContext));
@@ -48,15 +49,18 @@ export const RoleEdit: React.FC<Props> = ({ modalState,
             let newRoleId = await postNewRole(newRole);
             setCurrentRoleId(newRoleId);
             setNewRole({ ...newRole, id: newRoleId });
-            if (roleUsersEditRef.current.length > 0) {
+            if (isModifiedRoleUsers &&
+                roleUsersEditRef.current.length > 0) {
                 const tmp = roleUsersEditRef.current as RoleUsersFullType[];
                 roleUsersEditRef.current = tmp.map((el) => { return { ...el, role_id: newRoleId }; });
                 postRoleUsers(roleUsersEditRef.current);
             }
         } else {
             await putUpdatedRole(newRole);
-            await deleteRoleUsers(newRole.id);
-            await postRoleUsers(roleUsersEditRef.current);
+            if (isModifiedRoleUsers) {
+                await deleteRoleUsers(newRole.id);
+                await postRoleUsers(roleUsersEditRef.current);
+            }
         }
         setIsModified(false);
         setTimeout(refreshRoles, 300);

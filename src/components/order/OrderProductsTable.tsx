@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import * as React from 'react';
 import PlusOne from '@mui/icons-material/PlusOne';
 import { useEffect, useRef } from 'react';
-import { currentOrderIdState, newOrderProductsDefault, newOrderState } from './data/orderState';
+import { currentOrderIdState, isModifiedOrderProductsState, newOrderProductsDefault, newOrderState } from './data/orderState';
 import { currentProductIdState, newProductDefault, openProductSelectorState, productQuery } from '../product/data/productState';
 import { ProductSelector } from '../product/ProductSelector';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -27,15 +27,12 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProductsEditRef, orde
     const paperComponentDisabledRef = useRef(PaperComponentDisabled);
     const paperComponentRef = useRef(PaperComponentEnabled);
 
-    // const [orderProductsLines, setOrderProductsLines] = useRecoilState(orderProductsLinesState(editContext));
-    // setOrderProductsLines(orderProductsEditRef.current);
-
     const currentOrderId = useRecoilValue(currentOrderIdState(editContext));
     const [newOrder, setNewOrder] = useRecoilState(newOrderState);
 
-    // const [orderProductsLines, setOrderProductsLines] = useState([...orderProducts]);
     const [openProductSelector, setOpenProductSelector] = useRecoilState(openProductSelectorState);
     const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
+    const setIsModifiedOrderProducts = useSetRecoilState(isModifiedOrderProductsState(editContext));
 
     const currentProduct = useRecoilValue(productQuery(editContext));
     const currentProductId = useRecoilValue(currentProductIdState(editContext));
@@ -49,23 +46,20 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProductsEditRef, orde
             }
         }
         orderProductsEditRef.current = tmp;
-        // setOrderProductsLines(tmp);
         setIsModified(true);
-        // debugger;
+        setIsModifiedOrderProducts(true);
     }
     const addLineAction = () => {
-        // debugger;
         let newLine: OrderProductsFullType = { ...newOrderProductsDefault, products: {...newProductDefault, name: "выберите товар"} };
         newLine.order_id = currentOrderId;
         setNewOrder({...newOrder, id: currentOrderId});
-        // let orderIdTest = orderId;
         newLine.product_id = 0;
         newLineIdRef.current += 1;
         newLine.id = newLineIdRef.current;
         let tmp = [...orderProductsEditRef.current, newLine];
         orderProductsEditRef.current = tmp;
-        // setOrderProductsLines(tmp);
         setIsModified(true);
+        setIsModifiedOrderProducts(true);
     }
     const handleRowEditCommit = React.useCallback(
         (params) => {
@@ -74,9 +68,10 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProductsEditRef, orde
             const value = params.value;
             let tmp = orderProductsEditRef.current as OrderProductsFullType[];
             orderProductsEditRef.current = tmp.map(el => el.id === id ? { ...el, [key]: value } : el);
-            // setOrderProductsLines(orderProductsEditRef.current);
             setIsModified(true);
+            setIsModifiedOrderProducts(true);
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         []
     );
     const clickOpenProductSelector = (id: number) => {
@@ -91,8 +86,8 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProductsEditRef, orde
         } else {
             let tmp = orderProductsEditRef.current as OrderProductsFullType[];
             orderProductsEditRef.current = tmp.map(el => el.id === lineIdRef.current ? { ...el, product_id: currentProductId, products: currentProduct } : el);
-            // setOrderProductsLines(orderProductsEditRef.current);
             setIsModified(true);
+            setIsModifiedOrderProducts(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentProductId]);

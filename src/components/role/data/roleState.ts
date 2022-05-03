@@ -49,6 +49,11 @@ export const roleQuery = selectorFamily({
   },
 });
 
+export const isModifiedRoleUsersState = atomFamily({
+  key: "isModifiedRoleUsersState",
+  default: false,
+});
+
 export const roleUsersQuery = selectorFamily({
   key: "roleUsersQuery",
   get: (editContext: string) => async ({ get }) => {

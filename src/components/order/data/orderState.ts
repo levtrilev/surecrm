@@ -68,6 +68,11 @@ export const orderQuery = selectorFamily({
   },
 });
 
+export const isModifiedOrderProductsState = atomFamily({
+  key: "isModifiedOrderProductsState",
+  default: false,
+});
+
 export const orderProductsQuery = selectorFamily({
   key: "orderProductsQuery",
   get: (editContext: string) => async ({ get }) => {
@@ -75,11 +80,6 @@ export const orderProductsQuery = selectorFamily({
     return orderProductsQueryDao(id);
   },
 });
-
-// const orderProductsFullQueryEdit = atomFamily({
-//   key: 'orderProductsFullQueryAtom',
-//   default: [] as any[],
-// });
 
 export const orderProductsFullQuery = selectorFamily({
   key: "orderProductsFullQuery",

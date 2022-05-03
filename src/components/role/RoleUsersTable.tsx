@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import * as React from 'react';
 import PlusOne from '@mui/icons-material/PlusOne';
 import { useEffect, useRef } from 'react';
-import { currentRoleIdState, newRoleUsersDefault, newRoleState } from './data/roleState';
+import { currentRoleIdState, newRoleUsersDefault, newRoleState, isModifiedRoleUsersState } from './data/roleState';
 import { currentUserIdState, newUserDefault, openUserSelectorState, userQuery } from '../user/data/userState';
 import { UserSelector } from '../user/UserSelector';
 import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -32,6 +32,7 @@ export const RoleUsersTable: React.FC<Props> = ({ roleUsersEditRef, roleId, edit
 
     const [openUserSelector, setOpenUserSelector] = useRecoilState(openUserSelectorState);
     const setIsModified = useSetRecoilState(isModifiedState(localEditContext));
+    const setIsModifiedRoleUsers = useSetRecoilState(isModifiedRoleUsersState(editContext));
 
     const currentUser = useRecoilValue(userQuery(editContext));
     const currentUserId = useRecoilValue(currentUserIdState(editContext));
@@ -46,6 +47,7 @@ export const RoleUsersTable: React.FC<Props> = ({ roleUsersEditRef, roleId, edit
         }
         roleUsersEditRef.current = tmp;
         setIsModified(true);
+        setIsModifiedRoleUsers(true);
     }
     const addLineAction = () => {
         let newLine: RoleUsersFullType = { ...newRoleUsersDefault, users: {...newUserDefault, name: "выберите пользователя"} };
@@ -57,6 +59,7 @@ export const RoleUsersTable: React.FC<Props> = ({ roleUsersEditRef, roleId, edit
         let tmp = [...roleUsersEditRef.current, newLine];
         roleUsersEditRef.current = tmp;
         setIsModified(true);
+        setIsModifiedRoleUsers(true);
     }
     const handleRowEditCommit = React.useCallback(
         (params) => {
@@ -66,6 +69,7 @@ export const RoleUsersTable: React.FC<Props> = ({ roleUsersEditRef, roleId, edit
             let tmp = roleUsersEditRef.current as RoleUsersFullType[];
             roleUsersEditRef.current = tmp.map(el => el.id === id ? { ...el, [key]: value } : el);
             setIsModified(true);
+            setIsModifiedRoleUsers(true);
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         []
@@ -83,6 +87,7 @@ export const RoleUsersTable: React.FC<Props> = ({ roleUsersEditRef, roleId, edit
             let tmp = roleUsersEditRef.current as RoleUsersFullType[];
             roleUsersEditRef.current = tmp.map(el => el.id === lineIdRef.current ? { ...el, user_id: currentUserId, users: currentUser } : el);
             setIsModified(true);
+            setIsModifiedRoleUsers(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUserId]);
