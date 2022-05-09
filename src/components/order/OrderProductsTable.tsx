@@ -141,7 +141,7 @@ export const OrderProductsTable: React.FC<Props> = ({ orderProductsEditRef, orde
             editable: false,
             renderCell: (params: GridRenderCellParams<number>) => (
                 <strong>
-                    <IconButton size="medium" onClick={() => deleteLineAction(params.id as number)}>
+                    <IconButton size="medium" onClick={(e) => {e.stopPropagation(); deleteLineAction(params.id as number);}}>
                         <DeleteOutline />
                     </IconButton>
                 </strong>
