@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
 import { DataGrid, GridColDef, GridEvents, GridRenderCellParams } from '@mui/x-data-grid';
 import { useGridApiRef, useGridApiEventHandler } from '@mui/x-data-grid';
@@ -22,6 +22,7 @@ let editContext = 'ProdCategGrid';
 
 export default function ProdCategGrid() {
 
+    const isInitialMount = useRef(true);
     const prodCategs = useRecoilValue(prodCategsQuery) as ProductCategoryType[];
     const refreshProdCategs = useRecoilRefresher_UNSTABLE(prodCategsQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
@@ -96,7 +97,14 @@ export default function ProdCategGrid() {
     ];
 
     useGridApiEventHandler(useGridApiRef(), GridEvents.rowClick);
-
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            setTimeout(() => {
+                refreshProdCategs();
+            }, 200);
+        }
+    }, [refreshProdCategs]);
     useEffect(() => {
         if (yesCancel) {
             deleteProdCateg(currentProdCategId);

@@ -1,16 +1,19 @@
-import { DOMAIN, TOKEN } from "../../../shared/appConsts";
-const ENDPOINT = "view_customer_categories";
+import { DOMAIN } from "../../../shared/appConsts";
+import { tokenState } from "../../auth/signInState";
+import { getRecoil } from "recoil-nexus";
+const ENDPOINT = "customer_categories";
 
 export async function postNewCustomerCateg(
   newCustomerCateg: CustomerCategoryType
 ): Promise<number> {
+  const token: string = getRecoil(tokenState);
   let { id, ...customerCateg } = newCustomerCateg;
   const requestOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       'Prefer': 'return=representation',
-      Authorization: "Bearer " + TOKEN,
+      Authorization: "Bearer " + token,
     },
     body: JSON.stringify([{ ...customerCateg }]),
   };
@@ -24,11 +27,12 @@ export async function postNewCustomerCateg(
 export async function putUpdatedCustomerCateg(
   customerCateg: CustomerCategoryType
 ): Promise<void> {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + TOKEN,
+      Authorization: "Bearer " + token,
     },
     body: JSON.stringify([{ ...customerCateg }]),
   };
@@ -40,11 +44,12 @@ export async function putUpdatedCustomerCateg(
 }
 
 export async function deleteCustomerCateg(id: number): Promise<void> {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + TOKEN,
+      Authorization: "Bearer " + token,
     },
   };
   const response = await fetch(
@@ -55,11 +60,12 @@ export async function deleteCustomerCateg(id: number): Promise<void> {
 }
 
 export const custCategsQueryDao = async (): Promise<CustomerCategoryType[]> => {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + TOKEN,
+      Authorization: "Bearer " + token,
     },
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
@@ -71,11 +77,12 @@ export const custCategsQueryDao = async (): Promise<CustomerCategoryType[]> => {
 };
 
 export const custCategQueryDao = async (id: number): Promise<CustomerCategoryType|null> => {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + TOKEN,
+      Authorization: "Bearer " + token,
     },
   };
   const response = await fetch(

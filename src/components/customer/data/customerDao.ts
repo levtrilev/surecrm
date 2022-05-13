@@ -1,15 +1,19 @@
-import { DOMAIN, TOKEN } from "../../../shared/appConsts";
-const ENDPOINT = 'view_customers';
+import { DOMAIN } from "../../../shared/appConsts";
+import { tokenState } from "../../auth/signInState";
+import { getRecoil } from "recoil-nexus";
+
+const ENDPOINT = 'customers';
+const customer_categories_ENDPOINT = 'customer_categories';
 
 export async function postNewCustomer(newCustomer: CustomerType): Promise<number> {
+  const token: string = getRecoil(tokenState);
   let { id, ...customer } = newCustomer; // look at https://stackoverflow.com/questions/34698905/how-can-i-clone-a-javascript-object-except-for-one-key
 
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Prefer': 'return=representation', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Prefer': 'return=representation', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify([{ ...customer }])
   };
-  // console.log(requestOptions);
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
   console.log(response.status);
   let location = response.headers.get('Location');
@@ -18,19 +22,20 @@ export async function postNewCustomer(newCustomer: CustomerType): Promise<number
 }
 
 export async function deleteCustomer(id: number): Promise<void> {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: 'DELETE',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions);
   console.log(response.status, response.url);
 }
 
 export async function putUpdatedCustomer(customer: CustomerType): Promise<void> {
-
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     body: JSON.stringify([{ ...customer }])
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${customer.id}`, requestOptions);
@@ -38,9 +43,10 @@ export async function putUpdatedCustomer(customer: CustomerType): Promise<void> 
 }
 
 export const customersQueryDao = async (): Promise<CustomerType[]> => {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}`, requestOptions);
   const customers = await response.json() as CustomerType[];
@@ -51,9 +57,10 @@ export const customersQueryDao = async (): Promise<CustomerType[]> => {
 };
 
 export const customerQueryDao = async (id: number): Promise<CustomerType|null> => {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
   };
   const response = await fetch(`${DOMAIN}/${ENDPOINT}?id=eq.${id}`, requestOptions);
   const customer = await response.json();
@@ -69,12 +76,13 @@ export const customerQueryDao = async (id: number): Promise<CustomerType|null> =
 };
 
 export const customersFullQueryDao = async (): Promise<CustomerFullType[]> => {
+  const token: string = getRecoil(tokenState);
   const requestOptions = {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN },
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
   };
   const response = await fetch(
-    `${DOMAIN}/${ENDPOINT}?select=*,customer_categories:view_customer_categories(id,name)`,
+    `${DOMAIN}/${ENDPOINT}?select=*,${customer_categories_ENDPOINT}:customer_categories(id,name)`,
     requestOptions
   );
   const customers = await response.json();

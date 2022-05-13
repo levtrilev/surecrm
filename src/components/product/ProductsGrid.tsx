@@ -9,7 +9,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { ProductEdit } from './ProductEdit';
 import YesCancelDialog from '../../shared/YesCancelDialog';
 import { deleteProduct } from './data/productDao';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { currentProductIdState, newProductDefault, newProductState, productsFullQuery } from './data/productState'
 import { openEditModalState, showYesCancelDialogState, yesCancelState } from '../../state/state'
 import { currentProdCategIdState } from '../productCategory/data/prodCategState';
@@ -20,6 +20,7 @@ const editContext = 'ProductsGrid';
 
 export default function ProductsGrid(): JSX.Element {
 
+    const isInitialMount = useRef(true);
     const products = useRecoilValue(productsFullQuery) as ProductFullType[];
     const refreshProducts = useRecoilRefresher_UNSTABLE(productsFullQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
@@ -143,7 +144,14 @@ export default function ProductsGrid(): JSX.Element {
         //handleOpenModal();
     }
     useGridApiEventHandler(useGridApiRef(), GridEvents.rowClick);
-
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            setTimeout(() => {
+                refreshProducts();
+            }, 200);
+        }
+    }, [refreshProducts]);
     useEffect(() => {
         if (yesCancel) {
             deleteProduct(currentProductId);

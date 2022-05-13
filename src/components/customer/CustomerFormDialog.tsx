@@ -24,6 +24,7 @@ interface Props {
 
 export const CustomerFormDialog: React.FC<Props> = ({ updateCustomer,
     handleClose, modalState, editmodeText, editContext }) => {
+        
     const currentCustomerId = useRecoilValue(currentCustomerIdState(editContext));
     const localEditContext = 'Customer.' + currentCustomerId;
     const paperComponentEnabledRef = useRef(PaperComponentEnabled);

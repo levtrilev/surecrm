@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
 import { DataGrid, GridColDef, GridEventListener, GridEvents, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { useGridApiRef, useGridApiEventHandler } from '@mui/x-data-grid';
@@ -20,6 +20,7 @@ const editContext = 'CustomersGrid';
 
 export default function CustomersGrid(): JSX.Element {
 
+    const isInitialMount = useRef(true);
     const customers = useRecoilValue(customersFullQuery);
     const refreshCustomers = useRecoilRefresher_UNSTABLE(customersFullQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
@@ -76,6 +77,15 @@ export default function CustomersGrid(): JSX.Element {
     };
 
     useGridApiEventHandler(useGridApiRef(), GridEvents.rowClick);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            setTimeout(() => {
+                refreshCustomers();
+            }, 200);
+        }
+    }, [refreshCustomers]);
 
     useEffect(() => {
         if (yesCancel) {

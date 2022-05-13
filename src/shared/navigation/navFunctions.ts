@@ -8,7 +8,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import DraftsIcon from "@mui/icons-material/Drafts";
 
 export const settings_bak = ["Profile", "Account", "Dashboard", "Logout"];
-export const settings = ["Users", "Tenants", "Sections", "Roles"];
+export const settings = ["SignIn", "Users", "Tenants", "Sections", "Roles"];
 export const pages = [
   "Товары",
   "Покупатели",
@@ -40,15 +40,18 @@ export const handleSettingsMenuItemClick = (
 ) => {
   switch (index) {
     case 0:
-      navigate("/users", { replace: true });
+      navigate("/signin", { replace: true });
       break;
     case 1:
-      navigate("/tenants", { replace: true });
+      navigate("/users", { replace: true });
       break;
     case 2:
-      navigate("/sections", { replace: true });
+      navigate("/tenants", { replace: true });
       break;
     case 3:
+      navigate("/sections", { replace: true });
+      break;
+    case 4:
       navigate("/roles", { replace: true });
       break;
     default:

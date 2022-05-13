@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { putUpdatedCustomerCateg, postNewCustomerCateg } from './data/customerCategDao';
-import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState } from 'recoil';
 import { currentCustCategIdState, custCategQuery, custCategsQuery, newCustCategState } from './data/customerCategState'
-import { CustomerCategEditForm } from './CustomerCategEditForm';
+// import { CustomerCategEditForm } from './CustomerCategEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { useEffect } from 'react';
@@ -17,10 +17,10 @@ interface Props {
 
 export const CustomerCategEdit: React.FC<Props> = ({ modalState,
     setFromParrent, editmodeText, outerEditContext }) => {
-        const [currentCustCategId, setCurrentCustCategId] = useRecoilState(currentCustCategIdState(outerEditContext));
 
+    const [currentCustCategId, setCurrentCustCategId] = useRecoilState(currentCustCategIdState(outerEditContext));
     const localEditContext = 'CustomerCateg.' + currentCustCategId;
-    
+
     const refreshCustomerCategs = useRecoilRefresher_UNSTABLE(custCategsQuery);
     const refreshCustomerCateg = useRecoilRefresher_UNSTABLE(custCategQuery(outerEditContext));
 

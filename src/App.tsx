@@ -22,11 +22,13 @@ import UsersGrid from "./components/user/UsersGrid";
 import TenantsGrid from "./components/tenant/TenantsGrid";
 import SectionsGrid from "./components/section/SectionsGrid";
 import RolesGrid from "./components/role/RolesGrid";
+import RecoilNexus from "recoil-nexus";
 
 function App() {
   const drawerWidth = 240;
   return (
     <RecoilRoot>
+      <RecoilNexus/>
       <Router>
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />

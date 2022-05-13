@@ -1,6 +1,6 @@
 // это пока загрлушка
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilRefresher_UNSTABLE } from 'recoil';
 import { DataGrid, GridColDef, GridEvents, GridRenderCellParams } from '@mui/x-data-grid';
 import { useGridApiRef, useGridApiEventHandler } from '@mui/x-data-grid';
@@ -20,6 +20,7 @@ let editContext = 'CustCategGrid';
 
 export default function CustCategGrid() {
 
+    const isInitialMount = useRef(true);
     const customerCategs = useRecoilValue(custCategsQuery) as CustomerCategoryType[];
     const refreshCustomerCategs = useRecoilRefresher_UNSTABLE(custCategsQuery);
     const [yesCancel, setYesCancel] = useRecoilState(yesCancelState(editContext));
@@ -55,9 +56,7 @@ export default function CustCategGrid() {
         setCurrentCustomerCategId(id);
         setTimeout(refreshCustomerCategs, 300);
     };
-    // function getCategory(params: any) {
-    //     return `${params.row.product_categories.name || ''}`;
-    // }
+
     const prodColumns: GridColDef[] = [
         {
             field: 'id', headerName: 'ID', width: 60,
@@ -95,6 +94,14 @@ export default function CustCategGrid() {
     ];
 
     useGridApiEventHandler(useGridApiRef(), GridEvents.rowClick);
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            setTimeout(() => {
+                refreshCustomerCategs();
+            }, 200);
+        }
+    }, [refreshCustomerCategs]);
 
     useEffect(() => {
         if (yesCancel) {

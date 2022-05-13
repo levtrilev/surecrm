@@ -187,6 +187,11 @@ interface RoleUsersFullType {
   users: UserType;
 }
 
+interface EmailPassType {
+  email: string;
+  pass: string;
+}
+
 // type counter_one = number;
 // type counter_two = number;
 // type counter_three = number | null;

@@ -12,6 +12,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { tokenState } from './signInState';
+import { postGetToken } from './signInDao';
+import { setRecoil } from "recoil-nexus";
+
+// function async setGlobalToken(newToken: string): void {
+//   const token = await getRecoil(tokenState);
+//   await setRecoil(tokenState, newToken);
+// }
 
 function Copyright(props: any) {
   return (
@@ -29,13 +37,21 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<string> => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
     });
+    let newToken: string = await postGetToken({
+      email: data.get('email'),
+      pass: data.get('password'),
+    } as EmailPassType);
+    console.log(newToken);
+    setRecoil(tokenState, newToken);
+    return newToken;
   };
 
   return (
