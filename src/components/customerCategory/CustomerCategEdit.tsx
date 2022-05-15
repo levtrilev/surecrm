@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { putUpdatedCustomerCateg, postNewCustomerCateg } from './data/customerCategDao';
-import { useRecoilRefresher_UNSTABLE, useRecoilState } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { currentCustCategIdState, custCategQuery, custCategsQuery, newCustCategState } from './data/customerCategState'
 // import { CustomerCategEditForm } from './CustomerCategEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { useEffect } from 'react';
 import { CustomerCategFormDialog } from './CustomerCategFormDialog';
+import { userSectionTenantState } from '../auth/signInState';
 
 interface Props {
     modalState: boolean;
@@ -29,6 +30,7 @@ export const CustomerCategEdit: React.FC<Props> = ({ modalState,
     const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
     const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
+    const userSectionTenant = useRecoilValue(userSectionTenantState);
 
     const handleClose = () => {
         if (isModified) {
@@ -40,9 +42,16 @@ export const CustomerCategEdit: React.FC<Props> = ({ modalState,
 
     const updateCustomerCateg = async () => {
         if (newCustomerCateg.id === 0) {
-            let newCustomerCategId = await postNewCustomerCateg(newCustomerCateg);
+            let newCustomerCategId = await postNewCustomerCateg({
+                ...newCustomerCateg,
+                section_id: userSectionTenant.section_id,
+                tenant_id: userSectionTenant.tenant_id
+            });
             setCurrentCustCategId(newCustomerCategId);
-            setNewCustomerCateg({ ...newCustomerCateg, id: newCustomerCategId });
+            setNewCustomerCateg({
+                ...newCustomerCateg, id: newCustomerCategId
+            });
+            // debugger;
         } else {
             await putUpdatedCustomerCateg(newCustomerCateg);
         }

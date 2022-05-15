@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { OrderFormDialog } from './OrderFormDialog';
+import { userSectionTenantState } from '../auth/signInState';
 
 interface Props {
     modalState: boolean;
@@ -35,6 +36,7 @@ export const OrderEdit: React.FC<Props> = ({ modalState,
     const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
     const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
+    const userSectionTenant = useRecoilValue(userSectionTenantState);
 
     const handleClose = (): void => {
         if (isModified) {
@@ -46,14 +48,24 @@ export const OrderEdit: React.FC<Props> = ({ modalState,
 
     const updateOrder = async (): Promise<void> => {
         if (newOrder.id === 0) {
-            let newOrderId = await postNewOrder(newOrder);
+            let newOrderId = await postNewOrder({
+                ...newOrder,
+                section_id: userSectionTenant.section_id,
+                tenant_id: userSectionTenant.tenant_id
+            });
             setCurrentOrderId(newOrderId);
             setNewOrder({ ...newOrder, id: newOrderId });
-            
+
             if (isModifiedOrderProducts &&
                 orderProductsEditRef.current.length > 0) {
                 const tmp = orderProductsEditRef.current as OrderProductsFullType[];
-                orderProductsEditRef.current = tmp.map((el) => { return { ...el, order_id: newOrderId }; });
+                orderProductsEditRef.current = tmp.map((el) => {
+                    return {
+                        ...el, order_id: newOrderId,
+                        section_id: userSectionTenant.section_id,
+                        tenant_id: userSectionTenant.tenant_id
+                    };
+                });
                 postOrderProducts(orderProductsEditRef.current);
             }
         } else {

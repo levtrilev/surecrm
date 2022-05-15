@@ -12,9 +12,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { tokenState } from './signInState';
-import { postGetToken } from './signInDao';
-import { setRecoil } from "recoil-nexus";
+import { tokenState, userSectionTenantState } from './signInState';
+import { postGetToken, userSectionTenantQueryDao } from './signInDao';
+// import { setRecoil } from "recoil-nexus";
+import YesCancelDialog from '../../shared/YesCancelDialog';
+import { showYesCancelDialogState, yesCancelState } from '../../state/state'
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useEffect, useRef } from 'react';
 
 // function async setGlobalToken(newToken: string): void {
 //   const token = await getRecoil(tokenState);
@@ -38,6 +42,14 @@ const theme = createTheme();
 
 export default function SignIn() {
 
+  const isInitialMount = useRef(true);
+
+  const [yesCancel, setYesCancel] = useRecoilState(yesCancelState('signIn'));
+  const [showYesCancelDialog, setShowYesCancelDialog] = useRecoilState(showYesCancelDialogState('signIn'));
+  const [token, setToken] = useRecoilState(tokenState);
+  const setUserSectionTenant = useSetRecoilState(userSectionTenantState);
+
+  let newTokenJson: { token: string, message: string } = { "token": "", "message": "" };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<string> => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -45,14 +57,41 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
-    let newToken: string = await postGetToken({
+    newTokenJson = await postGetToken({
       email: data.get('email'),
       pass: data.get('password'),
     } as EmailPassType);
-    console.log(newToken);
-    setRecoil(tokenState, newToken);
+    let newToken: string = newTokenJson.token;
+    if (newTokenJson.message === 'invalid user or password') {
+      // alert(newTokenJson.message);
+      setShowYesCancelDialog(true);
+    }
+    setToken(newToken);
     return newToken;
   };
+
+  useEffect(() => {
+    if (yesCancel) {
+      setYesCancel(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [yesCancel]);
+
+  useEffect(() => {
+    async function userSectionTenantSet() {
+      let newUserSectionTenant: UserSectionTenantType = await userSectionTenantQueryDao();
+      setUserSectionTenant(newUserSectionTenant);
+      console.log(newUserSectionTenant);
+    }
+
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      userSectionTenantSet();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -120,6 +159,8 @@ export default function SignIn() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        {showYesCancelDialog ? <YesCancelDialog questionToConfirm={'Неправильный логин или пароль!'}
+          modalState={showYesCancelDialog} setFromParrent={setShowYesCancelDialog} editContext={'signIn'} /> : <></>}
       </Container>
     </ThemeProvider>
   );

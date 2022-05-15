@@ -216,3 +216,12 @@ interface PostType {
   body: string;
   id: number;
 }
+
+interface UserSectionTenantType {
+  user_id: number;
+  user_name: string;
+  section_id: number;
+  section_name: string;
+  tenant_id: number;
+  tenant_name: string;
+}

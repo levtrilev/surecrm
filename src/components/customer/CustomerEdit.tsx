@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { CustomerFormDialog } from './CustomerFormDialog';
+import { userSectionTenantState } from '../auth/signInState';
 
 interface Props {
     modalState: boolean;
@@ -30,6 +31,7 @@ export const CustomerEdit: React.FC<Props> = ({ modalState,
     const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
     const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
+    const userSectionTenant = useRecoilValue(userSectionTenantState);
 
     const handleClose = (): void => {
         if (isModified) {
@@ -41,7 +43,11 @@ export const CustomerEdit: React.FC<Props> = ({ modalState,
 
     const updateCustomer = async (): Promise<void> => {
         if (newCustomer.id === 0) {
-            let newCustomerId = await postNewCustomer(newCustomer);
+            let newCustomerId = await postNewCustomer({
+                ...newCustomer,
+                section_id: userSectionTenant.section_id,
+                tenant_id: userSectionTenant.tenant_id
+            });
             setCurrentCustomerId(newCustomerId);
             setNewCustomer({ ...newCustomer, id: newCustomerId });
         } else {

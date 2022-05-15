@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { putUpdatedProdCateg, postNewProdCateg } from './data/prodCategDao';
-import { useRecoilRefresher_UNSTABLE, useRecoilState } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState, useRecoilValue } from 'recoil';
 import { currentProdCategIdState, newProdCategState, prodCategQuery, prodCategsQuery } from './data/prodCategState'
 // import { ProdCategEditForm } from './ProdCategEditForm';
 import { isModifiedState, showYesNoCancelDialogState, yesNoCancelState } from '../../state/state';
 import YesNoCancelDialog from '../../shared/YesNoCancelDialog';
 import { useEffect } from 'react';
 import ProdCategFormDialog from './ProdCategFormDialog';
+import { userSectionTenantState } from '../auth/signInState';
 
 interface Props {
     modalState: boolean;
@@ -27,7 +28,8 @@ export const ProdCategEdit: React.FC<Props> = ({ modalState, setFromParrent, edi
     const [isModified, setIsModified] = useRecoilState(isModifiedState(localEditContext));
     const [showYesNoCancelDialog, setShowYesNoCancelDialog] = useRecoilState(showYesNoCancelDialogState(localEditContext));
     const [yesNoCancel, setYesNoCancel] = useRecoilState(yesNoCancelState(localEditContext));
-
+    const userSectionTenant = useRecoilValue(userSectionTenantState);
+    
     const handleClose = () => {
         if (isModified) {
             setShowYesNoCancelDialog(true);
@@ -38,7 +40,11 @@ export const ProdCategEdit: React.FC<Props> = ({ modalState, setFromParrent, edi
 
     const updateProdCateg = async () => {
         if (newProdCateg.id === 0) {
-            let newProdCategId = await postNewProdCateg(newProdCateg);
+            let newProdCategId = await postNewProdCateg({
+                ...newProdCateg,
+                section_id: userSectionTenant.section_id,
+                tenant_id: userSectionTenant.tenant_id
+            });
             setCurrentProdCategId(newProdCategId);
             setNewProdCateg({ ...newProdCateg, id: newProdCategId });
         } else {
